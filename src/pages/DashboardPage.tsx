@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { StatsCard } from "@/components/stats-card";
 import { DataTable } from "@/components/data-table";
 import { StatusBadge } from "@/components/status-badge";
+import { Badge } from "@/components/ui/badge";
 import { BarChart, PieChart, Pizza, ShoppingCart, Users } from "lucide-react";
 import { Customer, CustomerType, Order, OrderStatus, generateMockData, generateMockOrders } from "@/types";
 import { BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, Bar, Cell, PieChart as RechartsPieChart, Pie, Legend } from "recharts";

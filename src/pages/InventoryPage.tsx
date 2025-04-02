@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,14 +13,12 @@ export function InventoryPage() {
   const [categories] = useState<ProductCategory[]>(generateMockCategories());
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Filter products based on search query
   const filteredProducts = products.filter(
     (product) =>
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.categoryName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Products below threshold
   const lowStockProducts = products.filter(
     (product) => product.thresholdQuantity && product.currentQuantity < product.thresholdQuantity
   );
@@ -174,7 +171,7 @@ export function InventoryPage() {
                   },
                   {
                     header: "Da Ordinare",
-                    accessorKey: "toOrder",
+                    accessorKey: "currentQuantity",
                     cell: (row) => `${Math.max(0, (row.thresholdQuantity || 0) - row.currentQuantity)} ${row.unit}`
                   },
                   {
