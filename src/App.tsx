@@ -8,6 +8,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Sidebar } from "@/components/sidebar";
 import DashboardPage from "@/pages/DashboardPage";
 import InventoryPage from "@/pages/InventoryPage";
+import EditProductPage from "@/pages/EditProductPage";
+import EditCategoryPage from "@/pages/EditCategoryPage";
+import AddInventoryPage from "@/pages/AddInventoryPage";
+import ImportCSVPage from "@/pages/ImportCSVPage";
 import CustomersPage from "@/pages/CustomersPage";
 import OrdersPage from "@/pages/OrdersPage";
 import NotFound from "@/pages/NotFound";
@@ -26,6 +30,12 @@ const App = () => (
             <Routes>
               <Route path="/" element={<DashboardPage />} />
               <Route path="/inventory" element={<InventoryPage />} />
+              <Route path="/inventory/product/new" element={<EditProductPage />} />
+              <Route path="/inventory/product/edit/:id" element={<EditProductPage />} />
+              <Route path="/inventory/category/new" element={<EditCategoryPage />} />
+              <Route path="/inventory/category/edit/:id" element={<EditCategoryPage />} />
+              <Route path="/inventory/add" element={<AddInventoryPage />} />
+              <Route path="/inventory/import" element={<ImportCSVPage />} />
               <Route path="/customers" element={<CustomersPage />} />
               <Route path="/orders" element={<OrdersPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

@@ -1,14 +1,18 @@
+
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { DataTable } from "@/components/data-table";
-import { Plus, Search, Upload } from "lucide-react";
+import { Plus, Search, Upload, Edit, Trash } from "lucide-react";
 import { Product, ProductCategory, generateMockCategories, generateMockProducts } from "@/types";
+import { toast } from "sonner";
 
 export function InventoryPage() {
+  const navigate = useNavigate();
   const [products] = useState<Product[]>(generateMockProducts());
   const [categories] = useState<ProductCategory[]>(generateMockCategories());
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,16 +27,50 @@ export function InventoryPage() {
     (product) => product.thresholdQuantity && product.currentQuantity < product.thresholdQuantity
   );
 
+  const handleDeleteProduct = (productId: number) => {
+    // In a real app, we would delete from database
+    // For this mock, we'll just show a success message
+    const product = products.find(p => p.id === productId);
+    
+    if (product) {
+      toast.success(`Prodotto "${product.name}" eliminato con successo`);
+    }
+  };
+
+  const handleDeleteCategory = (categoryId: number) => {
+    // In a real app, we would delete from database
+    // For this mock, we'll just show a success message
+    const category = categories.find(c => c.id === categoryId);
+    
+    if (category) {
+      // Check if category has products
+      const hasProducts = products.some(p => p.categoryId === categoryId);
+      
+      if (hasProducts) {
+        toast.error("Impossibile eliminare una categoria che contiene prodotti");
+      } else {
+        toast.success(`Categoria "${category.name}" eliminata con successo`);
+      }
+    }
+  };
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Gestione Magazzino</h1>
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="gap-2">
+          <Button 
+            variant="outline" 
+            className="gap-2"
+            onClick={() => navigate("/inventory/import")}
+          >
             <Upload className="h-4 w-4" />
             Importa CSV
           </Button>
-          <Button className="gap-2">
+          <Button 
+            className="gap-2"
+            onClick={() => navigate("/inventory/product/new")}
+          >
             <Plus className="h-4 w-4" />
             Nuovo Prodotto
           </Button>
@@ -121,12 +159,23 @@ export function InventoryPage() {
                   {
                     header: "Azioni",
                     accessorKey: "id",
-                    cell: () => (
+                    cell: (row) => (
                       <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => navigate(`/inventory/product/edit/${row.id}`)}
+                        >
+                          <Edit className="h-4 w-4 mr-1" />
                           Modifica
                         </Button>
-                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                          onClick={() => handleDeleteProduct(row.id)}
+                        >
+                          <Trash className="h-4 w-4 mr-1" />
                           Elimina
                         </Button>
                       </div>
@@ -177,8 +226,12 @@ export function InventoryPage() {
                   {
                     header: "Azioni",
                     accessorKey: "id",
-                    cell: () => (
-                      <Button size="sm">
+                    cell: (row) => (
+                      <Button 
+                        size="sm"
+                        onClick={() => navigate(`/inventory/add`)}
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
                         Rifornisci
                       </Button>
                     )
@@ -219,12 +272,22 @@ export function InventoryPage() {
                   {
                     header: "Azioni",
                     accessorKey: "id",
-                    cell: () => (
+                    cell: (row) => (
                       <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => navigate(`/inventory/product/edit/${row.id}`)}
+                        >
+                          <Edit className="h-4 w-4 mr-1" />
                           Modifica
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => navigate(`/inventory/add`)}
+                        >
+                          <Plus className="h-4 w-4 mr-1" />
                           Aggiungi
                         </Button>
                       </div>
@@ -270,12 +333,23 @@ export function InventoryPage() {
                   {
                     header: "Azioni",
                     accessorKey: "id",
-                    cell: () => (
+                    cell: (row) => (
                       <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => navigate(`/inventory/product/edit/${row.id}`)}
+                        >
+                          <Edit className="h-4 w-4 mr-1" />
                           Modifica
                         </Button>
-                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                          onClick={() => handleDeleteProduct(row.id)}
+                        >
+                          <Trash className="h-4 w-4 mr-1" />
                           Elimina
                         </Button>
                       </div>
@@ -297,6 +371,15 @@ export function InventoryPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <div className="flex justify-end mb-4">
+            <Button 
+              onClick={() => navigate("/inventory/category/new")}
+              size="sm"
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              Nuova Categoria
+            </Button>
+          </div>
           <DataTable
             data={categories}
             columns={[
@@ -319,12 +402,23 @@ export function InventoryPage() {
               {
                 header: "Azioni",
                 accessorKey: "id",
-                cell: () => (
+                cell: (row) => (
                   <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="sm">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => navigate(`/inventory/category/edit/${row.id}`)}
+                    >
+                      <Edit className="h-4 w-4 mr-1" />
                       Modifica
                     </Button>
-                    <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                      onClick={() => handleDeleteCategory(row.id)}
+                    >
+                      <Trash className="h-4 w-4 mr-1" />
                       Elimina
                     </Button>
                   </div>

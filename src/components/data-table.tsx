@@ -68,9 +68,9 @@ export function DataTable<T>({ data, columns, searchKey }: DataTableProps<T>) {
           <TableBody>
             {paginatedData.length > 0 ? (
               paginatedData.map((row, rowIndex) => (
-                <TableRow key={rowIndex}>
-                  {columns.map((column) => (
-                    <TableCell key={`${rowIndex}-${String(column.accessorKey)}`}>
+                <TableRow key={`row-${rowIndex}-${String(row['id'] || rowIndex)}`}>
+                  {columns.map((column, colIndex) => (
+                    <TableCell key={`cell-${rowIndex}-${colIndex}-${String(column.accessorKey)}`}>
                       {column.cell ? column.cell(row) : String(row[column.accessorKey] || '')}
                     </TableCell>
                   ))}
