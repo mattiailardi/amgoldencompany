@@ -7,19 +7,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatusBadge } from "@/components/status-badge";
 import { DataTable } from "@/components/data-table";
 import { ArrowRight, Clock, MapPin, Plus, Search, Truck } from "lucide-react";
-import { OrderStatus, generateMockOrders } from "@/types";
+import { Customer, Order, OrderItem, OrderStatus, Product, generateMockCustomers, generateMockOrders, generateMockProducts } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import { it } from "date-fns/locale";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { OrderForm } from "@/components/order-form";
+import { OrderDetail } from "@/components/order-detail";
 
 export function OrdersPage() {
-  const allOrders = generateMockOrders();
+  const navigate = useNavigate();
+  const [orders, setOrders] = useState<Order[]>(generateMockOrders());
   const [searchQuery, setSearchQuery] = useState("");
+  const [newOrderOpen, setNewOrderOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  const activeOrders = allOrders.filter(order => 
+  const activeOrders = orders.filter(order => 
     order.status !== OrderStatus.Delivered && order.status !== OrderStatus.Cancelled
   );
 
-  const historyOrders = allOrders.filter(order => 
+  const historyOrders = orders.filter(order => 
     order.status === OrderStatus.Delivered || order.status === OrderStatus.Cancelled
   );
 
@@ -42,11 +50,69 @@ export function OrdersPage() {
       )
   );
 
+  const handleCreateOrder = (newOrder: Order) => {
+    // Assign a new ID to the order
+    const newId = Math.max(0, ...orders.map(o => o.id)) + 1;
+    const orderWithId = { ...newOrder, id: newId };
+    
+    setOrders([orderWithId, ...orders]);
+    setNewOrderOpen(false);
+    toast.success("Ordine creato con successo");
+  };
+
+  const handleUpdateStatus = (orderId: number, newStatus: OrderStatus) => {
+    setOrders(orders.map(order => 
+      order.id === orderId 
+        ? { ...order, status: newStatus } 
+        : order
+    ));
+
+    const statusMessages = {
+      [OrderStatus.InPreparation]: "Ordine in preparazione",
+      [OrderStatus.ReadyForDelivery]: "Ordine pronto per la consegna",
+      [OrderStatus.InDelivery]: "Ordine in consegna",
+      [OrderStatus.Delivered]: "Ordine consegnato con successo",
+      [OrderStatus.Cancelled]: "Ordine annullato"
+    };
+
+    toast.success(statusMessages[newStatus] || "Stato ordine aggiornato");
+  };
+
+  const getNextStatus = (currentStatus: OrderStatus): OrderStatus | null => {
+    switch (currentStatus) {
+      case OrderStatus.New:
+        return OrderStatus.InPreparation;
+      case OrderStatus.InPreparation:
+        return OrderStatus.ReadyForDelivery;
+      case OrderStatus.ReadyForDelivery:
+        return OrderStatus.InDelivery;
+      case OrderStatus.InDelivery:
+        return OrderStatus.Delivered;
+      default:
+        return null;
+    }
+  };
+
+  const getNextStatusLabel = (currentStatus: OrderStatus): string => {
+    switch (currentStatus) {
+      case OrderStatus.New:
+        return "Inizia Preparazione";
+      case OrderStatus.InPreparation:
+        return "Segna Pronto";
+      case OrderStatus.ReadyForDelivery:
+        return "Inizia Consegna";
+      case OrderStatus.InDelivery:
+        return "Consegnato";
+      default:
+        return "Dettagli";
+    }
+  };
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Gestione Ordini</h1>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => setNewOrderOpen(true)}>
           <Plus className="h-4 w-4" />
           Nuovo Ordine
         </Button>
@@ -71,7 +137,7 @@ export function OrdersPage() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-blue-600">
-              {activeOrders.filter(o => o.status === OrderStatus.New).length}
+              {orders.filter(o => o.status === OrderStatus.New).length}
             </div>
           </CardContent>
         </Card>
@@ -82,7 +148,7 @@ export function OrdersPage() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-orange-600">
-              {activeOrders.filter(o => o.status === OrderStatus.InPreparation).length}
+              {orders.filter(o => o.status === OrderStatus.InPreparation).length}
             </div>
           </CardContent>
         </Card>
@@ -93,7 +159,7 @@ export function OrdersPage() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-purple-600">
-              {activeOrders.filter(o => o.status === OrderStatus.ReadyForDelivery).length}
+              {orders.filter(o => o.status === OrderStatus.ReadyForDelivery).length}
             </div>
           </CardContent>
         </Card>
@@ -104,7 +170,7 @@ export function OrdersPage() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-indigo-600">
-              {activeOrders.filter(o => o.status === OrderStatus.InDelivery).length}
+              {orders.filter(o => o.status === OrderStatus.InDelivery).length}
             </div>
           </CardContent>
         </Card>
@@ -202,33 +268,38 @@ export function OrdersPage() {
                     header: "Azioni",
                     accessorKey: "id",
                     cell: (row) => {
-                      let nextAction;
-                      
-                      switch(row.status) {
-                        case OrderStatus.New:
-                          nextAction = { label: "Inizia Preparazione", variant: "default" };
-                          break;
-                        case OrderStatus.InPreparation:
-                          nextAction = { label: "Segna Pronto", variant: "default" };
-                          break;
-                        case OrderStatus.ReadyForDelivery:
-                          nextAction = { label: "Inizia Consegna", variant: "default" };
-                          break;
-                        case OrderStatus.InDelivery:
-                          nextAction = { label: "Consegnato", variant: "default" };
-                          break;
-                        default:
-                          nextAction = { label: "Dettagli", variant: "outline" };
-                      }
+                      const nextStatus = getNextStatus(row.status);
+                      const nextActionLabel = getNextStatusLabel(row.status);
                       
                       return (
                         <div className="flex items-center gap-2">
-                          <Button size="sm" variant={nextAction.variant as any}>
-                            {nextAction.label}
-                          </Button>
-                          <Button variant="outline" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50">
-                            Annulla
-                          </Button>
+                          {nextStatus ? (
+                            <Button 
+                              size="sm" 
+                              variant="default"
+                              onClick={() => handleUpdateStatus(row.id, nextStatus)}
+                            >
+                              {nextActionLabel}
+                            </Button>
+                          ) : (
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => setSelectedOrder(row)}
+                            >
+                              Dettagli
+                            </Button>
+                          )}
+                          {row.status !== OrderStatus.Cancelled && (
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                              onClick={() => handleUpdateStatus(row.id, OrderStatus.Cancelled)}
+                            >
+                              Annulla
+                            </Button>
+                          )}
                         </div>
                       );
                     }
@@ -287,8 +358,13 @@ export function OrdersPage() {
                   {
                     header: "Azioni",
                     accessorKey: "id",
-                    cell: () => (
-                      <Button variant="ghost" size="sm" className="gap-1">
+                    cell: (row) => (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="gap-1"
+                        onClick={() => setSelectedOrder(row)}
+                      >
                         Dettagli
                         <ArrowRight className="h-3 w-3" />
                       </Button>
@@ -351,6 +427,42 @@ export function OrdersPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Form modale per nuovo ordine */}
+      <Dialog open={newOrderOpen} onOpenChange={setNewOrderOpen}>
+        <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Crea nuovo ordine</DialogTitle>
+            <DialogDescription>
+              Inserisci i dettagli del nuovo ordine
+            </DialogDescription>
+          </DialogHeader>
+          
+          <OrderForm onSubmit={handleCreateOrder} onCancel={() => setNewOrderOpen(false)} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Modale dettagli ordine */}
+      <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Dettagli Ordine #{selectedOrder?.id}</DialogTitle>
+          </DialogHeader>
+          
+          {selectedOrder && (
+            <OrderDetail 
+              order={selectedOrder}
+              onUpdateStatus={handleUpdateStatus}
+            />
+          )}
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSelectedOrder(null)}>
+              Chiudi
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
