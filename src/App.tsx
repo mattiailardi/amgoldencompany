@@ -14,6 +14,9 @@ import AddInventoryPage from "@/pages/AddInventoryPage";
 import ImportCSVPage from "@/pages/ImportCSVPage";
 import CustomersPage from "@/pages/CustomersPage";
 import OrdersPage from "@/pages/OrdersPage";
+import SalesPage from "@/pages/SalesPage";
+import NewSalePage from "@/pages/NewSalePage";
+import SalesHistoryPage from "@/pages/SalesHistoryPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +41,9 @@ const App = () => (
               <Route path="/inventory/import" element={<ImportCSVPage />} />
               <Route path="/customers" element={<CustomersPage />} />
               <Route path="/orders" element={<OrdersPage />} />
+              <Route path="/sales" element={<SalesPage />} />
+              <Route path="/sales/new" element={<NewSalePage />} />
+              <Route path="/sales/history" element={<SalesHistoryPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
