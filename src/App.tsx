@@ -24,6 +24,7 @@ import HACCPPage from "@/pages/HACCPPage";
 import HACCPHygienePage from "@/pages/HACCPHygienePage";
 import HACCPInventoryPage from "@/pages/HACCPInventoryPage";
 import HACCPLabelsPage from "@/pages/HACCPLabelsPage";
+import EmployeesPage from "@/pages/EmployeesPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -58,6 +59,7 @@ const App = () => (
               <Route path="/haccp/hygiene" element={<HACCPHygienePage />} />
               <Route path="/haccp/inventory" element={<HACCPInventoryPage />} />
               <Route path="/haccp/labels" element={<HACCPLabelsPage />} />
+              <Route path="/employees" element={<EmployeesPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
