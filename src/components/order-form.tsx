@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Customer, Order, OrderItem, OrderStatus, Product, generateMockCustomers, generateMockProducts } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
@@ -54,7 +54,8 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
     },
   });
 
-  const { fields, append, remove } = form.useFieldArray({
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
     name: "items",
   });
 
@@ -88,9 +89,13 @@ export function OrderForm({ onSubmit, onCancel }: OrderFormProps) {
       deliveryNotes: values.deliveryNotes,
       status: OrderStatus.New,
       items: values.items.map(item => ({
-        ...item,
         id: 0, // Would be assigned by database
         orderId: 0, // Will be linked to the order ID
+        productId: item.productId,
+        quantity: item.quantity,
+        notes: item.notes,
+        priceAtOrder: item.priceAtOrder,
+        productName: item.productName
       })),
       total: values.items.reduce((sum, item) => sum + (item.quantity * item.priceAtOrder), 0)
     };
