@@ -101,7 +101,7 @@ export function Sidebar({ className }: SidebarProps) {
               to={route.path}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
-                location.pathname === route.path 
+                location.pathname === route.path || location.pathname.startsWith(route.path + "/")
                   ? "bg-teal-50 text-teal-700 font-medium" 
                   : "text-gray-600 hover:bg-gray-100",
                 collapsed && "justify-center px-2"
