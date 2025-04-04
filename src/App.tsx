@@ -20,6 +20,10 @@ import SalesHistoryPage from "@/pages/SalesHistoryPage";
 import AccountingPage from "@/pages/AccountingPage";
 import AccountingDailyPage from "@/pages/AccountingDailyPage";
 import AccountingCategoriesPage from "@/pages/AccountingCategoriesPage";
+import HACCPPage from "@/pages/HACCPPage";
+import HACCPHygienePage from "@/pages/HACCPHygienePage";
+import HACCPInventoryPage from "@/pages/HACCPInventoryPage";
+import HACCPLabelsPage from "@/pages/HACCPLabelsPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,6 +54,10 @@ const App = () => (
               <Route path="/accounting" element={<AccountingPage />} />
               <Route path="/accounting/daily" element={<AccountingDailyPage />} />
               <Route path="/accounting/categories" element={<AccountingCategoriesPage />} />
+              <Route path="/haccp" element={<HACCPPage />} />
+              <Route path="/haccp/hygiene" element={<HACCPHygienePage />} />
+              <Route path="/haccp/inventory" element={<HACCPInventoryPage />} />
+              <Route path="/haccp/labels" element={<HACCPLabelsPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
