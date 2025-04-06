@@ -6,13 +6,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Camera, Upload } from "lucide-react";
+import { Product } from "@/types";
 
 interface AddProductFormProps {
   onSubmit: (product: any) => void;
   onCancel: () => void;
+  inventoryIngredients?: Product[];
 }
 
-const AddProductForm = ({ onSubmit, onCancel }: AddProductFormProps) => {
+const AddProductForm = ({ onSubmit, onCancel, inventoryIngredients = [] }: AddProductFormProps) => {
   const [product, setProduct] = useState({
     name: "",
     lot: "",
