@@ -1,4 +1,3 @@
-
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
@@ -9,6 +8,7 @@ interface Column<T> {
   header: string;
   accessorKey: keyof T;
   cell?: (row: T) => React.ReactNode;
+  id?: string;
 }
 
 interface DataTableProps<T> {
@@ -59,7 +59,7 @@ export function DataTable<T>({ data, columns, searchKey }: DataTableProps<T>) {
           <TableHeader>
             <TableRow>
               {columns.map((column) => (
-                <TableHead key={String(column.accessorKey)}>
+                <TableHead key={column.id || String(column.accessorKey)}>
                   {column.header}
                 </TableHead>
               ))}
@@ -70,7 +70,7 @@ export function DataTable<T>({ data, columns, searchKey }: DataTableProps<T>) {
               paginatedData.map((row, rowIndex) => (
                 <TableRow key={`row-${rowIndex}-${String(row['id'] || rowIndex)}`}>
                   {columns.map((column, colIndex) => (
-                    <TableCell key={`cell-${rowIndex}-${colIndex}-${String(column.accessorKey)}`}>
+                    <TableCell key={`cell-${rowIndex}-${colIndex}-${column.id || String(column.accessorKey)}`}>
                       {column.cell ? column.cell(row) : String(row[column.accessorKey] || '')}
                     </TableCell>
                   ))}
