@@ -7,12 +7,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { DataTable } from "@/components/data-table";
-import { Plus, Search, Upload, Edit, Trash } from "lucide-react";
+import { Plus, Search, Upload, Edit, Trash, ListFilter } from "lucide-react";
 import { Product, ProductCategory, generateMockCategories, generateMockProducts } from "@/types";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 
 export function InventoryPage() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export function InventoryPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
+  const [isManagingCategories, setIsManagingCategories] = useState(false);
   const [newProduct, setNewProduct] = useState<Partial<Product>>({
     name: "",
     categoryId: 1,
@@ -132,6 +134,107 @@ export function InventoryPage() {
             <Upload className="h-4 w-4" />
             Importa CSV
           </Button>
+          
+          <Drawer open={isManagingCategories} onOpenChange={setIsManagingCategories}>
+            <DrawerTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <ListFilter className="h-4 w-4" />
+                Gestisci Categorie
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent>
+              <div className="mx-auto w-full max-w-4xl">
+                <DrawerHeader className="text-left">
+                  <DrawerTitle>Gestione Categorie</DrawerTitle>
+                  <DrawerDescription>
+                    Gestisci le categorie degli ingredienti del magazzino
+                  </DrawerDescription>
+                </DrawerHeader>
+                <div className="p-4 pb-8">
+                  <div className="flex justify-end mb-4">
+                    <Sheet open={isAddingCategory} onOpenChange={setIsAddingCategory}>
+                      <SheetTrigger asChild>
+                        <Button size="sm">
+                          <Plus className="h-4 w-4 mr-1" />
+                          Nuova Categoria
+                        </Button>
+                      </SheetTrigger>
+                      <SheetContent>
+                        <SheetHeader>
+                          <SheetTitle>Aggiungi Nuova Categoria</SheetTitle>
+                          <SheetDescription>
+                            Crea una nuova categoria per organizzare gli ingredienti
+                          </SheetDescription>
+                        </SheetHeader>
+                        <div className="space-y-4 py-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="category-name">Nome Categoria *</Label>
+                            <Input 
+                              id="category-name" 
+                              value={newCategory.name} 
+                              onChange={(e) => setNewCategory({...newCategory, name: e.target.value})} 
+                              placeholder="Es. Latticini"
+                            />
+                          </div>
+                          <div className="flex justify-end space-x-2 pt-4">
+                            <Button variant="outline" onClick={() => setIsAddingCategory(false)}>Annulla</Button>
+                            <Button onClick={handleAddCategory}>Aggiungi Categoria</Button>
+                          </div>
+                        </div>
+                      </SheetContent>
+                    </Sheet>
+                  </div>
+                  <DataTable
+                    data={categoriesWithCount}
+                    columns={[
+                      {
+                        header: "ID",
+                        accessorKey: "id",
+                      },
+                      {
+                        header: "Nome",
+                        accessorKey: "name",
+                      },
+                      {
+                        header: "Prodotti",
+                        accessorKey: "productCount",
+                        cell: (row) => {
+                          return <Badge variant="outline">{row.productCount} ingredienti</Badge>;
+                        }
+                      },
+                      {
+                        header: "Azioni",
+                        accessorKey: "id",
+                        id: "categoryActions",
+                        cell: (row) => (
+                          <div className="flex items-center gap-2">
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => navigate(`/inventory/category/edit/${row.id}`)}
+                            >
+                              <Edit className="h-4 w-4 mr-1" />
+                              Modifica
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                              onClick={() => handleDeleteCategory(row.id)}
+                            >
+                              <Trash className="h-4 w-4 mr-1" />
+                              Elimina
+                            </Button>
+                          </div>
+                        )
+                      },
+                    ]}
+                  />
+                </div>
+              </div>
+            </DrawerContent>
+          </Drawer>
+          
           <Sheet open={isAddingProduct} onOpenChange={setIsAddingProduct}>
             <SheetTrigger asChild>
               <Button className="gap-2">
@@ -408,98 +511,6 @@ export function InventoryPage() {
           </Card>
         </TabsContent>
       </Tabs>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>Categorie Ingredienti</CardTitle>
-          <CardDescription>
-            Gestione delle categorie di ingredienti
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex justify-end mb-4">
-            <Sheet open={isAddingCategory} onOpenChange={setIsAddingCategory}>
-              <SheetTrigger asChild>
-                <Button size="sm">
-                  <Plus className="h-4 w-4 mr-1" />
-                  Nuova Categoria
-                </Button>
-              </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Aggiungi Nuova Categoria</SheetTitle>
-                  <SheetDescription>
-                    Crea una nuova categoria per organizzare gli ingredienti
-                  </SheetDescription>
-                </SheetHeader>
-                <div className="space-y-4 py-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="category-name">Nome Categoria *</Label>
-                    <Input 
-                      id="category-name" 
-                      value={newCategory.name} 
-                      onChange={(e) => setNewCategory({...newCategory, name: e.target.value})} 
-                      placeholder="Es. Latticini"
-                    />
-                  </div>
-                  <div className="flex justify-end space-x-2 pt-4">
-                    <Button variant="outline" onClick={() => setIsAddingCategory(false)}>Annulla</Button>
-                    <Button onClick={handleAddCategory}>Aggiungi Categoria</Button>
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-          <DataTable
-            data={categoriesWithCount}
-            columns={[
-              {
-                header: "ID",
-                accessorKey: "id",
-              },
-              {
-                header: "Nome",
-                accessorKey: "name",
-              },
-              {
-                header: "Prodotti",
-                accessorKey: "id",
-                id: "productCount",
-                cell: (row) => {
-                  const count = products.filter(p => p.categoryId === row.id).length;
-                  return <Badge variant="outline">{count} ingredienti</Badge>;
-                }
-              },
-              {
-                header: "Azioni",
-                accessorKey: "id",
-                id: "categoryActions",
-                cell: (row) => (
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => navigate(`/inventory/category/edit/${row.id}`)}
-                    >
-                      <Edit className="h-4 w-4 mr-1" />
-                      Modifica
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                      onClick={() => handleDeleteCategory(row.id)}
-                    >
-                      <Trash className="h-4 w-4 mr-1" />
-                      Elimina
-                    </Button>
-                  </div>
-                )
-              },
-            ]}
-          />
-        </CardContent>
-      </Card>
     </div>
   );
 }
