@@ -9,7 +9,165 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      accounting_categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          type: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          type: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          type?: number
+        }
+        Relationships: []
+      }
+      accounting_transactions: {
+        Row: {
+          amount: number
+          category_id: string
+          created_at: string
+          date: string
+          id: string
+          notes: string | null
+        }
+        Insert: {
+          amount: number
+          category_id: string
+          created_at?: string
+          date: string
+          id?: string
+          notes?: string | null
+        }
+        Update: {
+          amount?: number
+          category_id?: string
+          created_at?: string
+          date?: string
+          id?: string
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounting_transactions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "accounting_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      menu_categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          position: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          position?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          position?: number
+        }
+        Relationships: []
+      }
+      menu_items: {
+        Row: {
+          category_id: string
+          cost: number | null
+          created_at: string
+          description: string | null
+          id: string
+          is_available: boolean
+          name: string
+          price: number
+        }
+        Insert: {
+          category_id: string
+          cost?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_available?: boolean
+          name: string
+          price: number
+        }
+        Update: {
+          category_id?: string
+          cost?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_available?: boolean
+          name?: string
+          price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "menu_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "menu_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          menu_item_id: string
+          notes: string | null
+          quantity: number
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          menu_item_id: string
+          notes?: string | null
+          quantity: number
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          menu_item_id?: string
+          notes?: string | null
+          quantity?: number
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_menu_item_id_fkey"
+            columns: ["menu_item_id"]
+            isOneToOne: false
+            referencedRelation: "menu_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

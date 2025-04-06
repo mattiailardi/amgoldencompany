@@ -1,6 +1,6 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 // Hook generico per effettuare query al database
@@ -121,7 +121,7 @@ export function useSupabaseUpdate<T, U>(tableName: string, idColumn: string = 'i
   const { toast } = useToast();
   
   return useMutation({
-    mutationFn: async ({ id, ...item }: U & { id: number }): Promise<T> => {
+    mutationFn: async ({ id, ...item }: U & { id: string }): Promise<T> => {
       const { data, error } = await supabase
         .from(tableName)
         .update(item)
@@ -156,7 +156,7 @@ export function useSupabaseDelete(tableName: string, idColumn: string = 'id') {
   const { toast } = useToast();
   
   return useMutation({
-    mutationFn: async (id: number): Promise<void> => {
+    mutationFn: async (id: string): Promise<void> => {
       const { error } = await supabase
         .from(tableName)
         .delete()
