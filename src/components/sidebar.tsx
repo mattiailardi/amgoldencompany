@@ -77,6 +77,11 @@ export function Sidebar({ className }: SidebarProps) {
       path: "/employees",
       icon: <Users className="h-5 w-5" />,
     },
+    {
+      name: "Impostazioni",
+      path: "/settings",
+      icon: <Settings className="h-5 w-5" />,
+    }
   ];
 
   return (
@@ -95,6 +100,7 @@ export function Sidebar({ className }: SidebarProps) {
           size="icon" 
           onClick={() => setCollapsed(!collapsed)}
           className="h-8 w-8"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           <Menu className="h-4 w-4" />
         </Button>
@@ -113,6 +119,7 @@ export function Sidebar({ className }: SidebarProps) {
                     : "text-gray-600 hover:bg-gray-100",
                   collapsed && "justify-center px-2"
                 )}
+                title={collapsed ? route.name : undefined}
               >
                 {route.icon}
                 {!collapsed && <span>{route.name}</span>}

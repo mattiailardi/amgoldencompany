@@ -158,7 +158,7 @@ export function InventoryPage() {
                   },
                   {
                     header: "Azioni",
-                    accessorKey: "id",
+                    id: "actions", // Add a unique ID to fix duplicate key warning
                     cell: (row) => (
                       <div className="flex items-center gap-2">
                         <Button 
@@ -220,12 +220,12 @@ export function InventoryPage() {
                   },
                   {
                     header: "Da Ordinare",
-                    accessorKey: "currentQuantity",
+                    id: "toOrder", // Add a unique ID to fix duplicate key warning
                     cell: (row) => `${Math.max(0, (row.thresholdQuantity || 0) - row.currentQuantity)} ${row.unit}`
                   },
                   {
                     header: "Azioni",
-                    accessorKey: "id",
+                    id: "lowStockActions", // Add a unique ID to fix duplicate key warning
                     cell: (row) => (
                       <Button 
                         size="sm"
@@ -271,7 +271,7 @@ export function InventoryPage() {
                   },
                   {
                     header: "Azioni",
-                    accessorKey: "id",
+                    id: "ingredientsActions", // Add a unique ID to fix duplicate key warning
                     cell: (row) => (
                       <div className="flex items-center gap-2">
                         <Button 
@@ -332,7 +332,7 @@ export function InventoryPage() {
                   },
                   {
                     header: "Azioni",
-                    accessorKey: "id",
+                    id: "finishedProductsActions", // Add a unique ID to fix duplicate key warning
                     cell: (row) => (
                       <div className="flex items-center gap-2">
                         <Button 
@@ -393,7 +393,7 @@ export function InventoryPage() {
               },
               {
                 header: "Prodotti",
-                accessorKey: "id",
+                id: "productCount", // Add a unique ID to fix duplicate key warning
                 cell: (row) => {
                   const count = products.filter(p => p.categoryId === row.id).length;
                   return <Badge variant="outline">{count} prodotti</Badge>;
@@ -401,7 +401,7 @@ export function InventoryPage() {
               },
               {
                 header: "Azioni",
-                accessorKey: "id",
+                id: "categoryActions", // Add a unique ID to fix duplicate key warning
                 cell: (row) => (
                   <div className="flex items-center gap-2">
                     <Button 

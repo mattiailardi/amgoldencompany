@@ -150,6 +150,7 @@ const MenuPage = () => {
                       variant="outline" 
                       size="icon" 
                       onClick={() => handleEditItem(item)}
+                      aria-label="Modifica piatto"
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -157,6 +158,7 @@ const MenuPage = () => {
                       variant="outline" 
                       size="icon"
                       onClick={() => handleDeleteItem(item.id)}
+                      aria-label="Elimina piatto"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -175,8 +177,9 @@ const MenuPage = () => {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Nome</label>
+                  <label htmlFor="dish-name" className="block text-sm font-medium mb-1">Nome</label>
                   <Input 
+                    id="dish-name"
                     value={currentItem.name}
                     onChange={(e) => setCurrentItem({...currentItem, name: e.target.value})}
                     required
@@ -184,8 +187,9 @@ const MenuPage = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Descrizione</label>
+                  <label htmlFor="dish-description" className="block text-sm font-medium mb-1">Descrizione</label>
                   <Textarea 
+                    id="dish-description"
                     value={currentItem.description}
                     onChange={(e) => setCurrentItem({...currentItem, description: e.target.value})}
                     rows={3}
@@ -193,8 +197,9 @@ const MenuPage = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Categoria</label>
+                  <label htmlFor="dish-category" className="block text-sm font-medium mb-1">Categoria</label>
                   <Input 
+                    id="dish-category"
                     value={currentItem.category}
                     onChange={(e) => setCurrentItem({...currentItem, category: e.target.value})}
                     required
@@ -202,10 +207,12 @@ const MenuPage = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Prezzo (€)</label>
+                  <label htmlFor="dish-price" className="block text-sm font-medium mb-1">Prezzo (€)</label>
                   <Input 
+                    id="dish-price"
                     type="number"
                     step="0.01"
+                    min="0"
                     value={currentItem.price}
                     onChange={(e) => setCurrentItem({...currentItem, price: parseFloat(e.target.value)})}
                     required
@@ -213,14 +220,26 @@ const MenuPage = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Ingredienti</label>
+                  <label htmlFor="dish-ingredient" className="block text-sm font-medium mb-1">Ingredienti</label>
                   <div className="flex space-x-2 mb-2">
                     <Input 
+                      id="dish-ingredient"
                       value={newIngredient}
                       onChange={(e) => setNewIngredient(e.target.value)}
                       placeholder="Aggiungi ingrediente"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleAddIngredient();
+                        }
+                      }}
                     />
-                    <Button type="button" size="sm" onClick={handleAddIngredient}>
+                    <Button 
+                      type="button" 
+                      size="sm" 
+                      onClick={handleAddIngredient}
+                      aria-label="Aggiungi ingrediente"
+                    >
                       <PlusCircle className="h-4 w-4" />
                     </Button>
                   </div>
@@ -234,6 +253,7 @@ const MenuPage = () => {
                           variant="ghost" 
                           size="sm" 
                           onClick={() => handleRemoveIngredient(index)}
+                          aria-label={`Rimuovi ingrediente ${ingredient}`}
                         >
                           <Trash2 className="h-3 w-3" />
                         </Button>
