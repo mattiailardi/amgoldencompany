@@ -6,6 +6,8 @@ import { DataTable } from "@/components/data-table";
 import { PlusCircle } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import AddProductForm from "@/components/haccp/add-product-form";
+import { generateMockProducts, Product } from "@/types";
+import { toast } from "sonner";
 
 // Mock data for product expiration dates
 const mockProducts = [
@@ -19,6 +21,7 @@ const mockProducts = [
 const HACCPInventoryPage = () => {
   const [products, setProducts] = useState(mockProducts);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
+  const [inventoryIngredients] = useState<Product[]>(generateMockProducts());
 
   const columns = [
     {
@@ -67,15 +70,37 @@ const HACCPInventoryPage = () => {
       cell: (row: any) => (
         <div className="flex gap-2">
           <Button variant="outline" size="sm">Modifica</Button>
-          <Button variant="destructive" size="sm">Elimina</Button>
+          <Button 
+            variant="destructive" 
+            size="sm"
+            onClick={() => {
+              setProducts(products.filter(p => p.id !== row.id));
+              toast.success("Prodotto eliminato con successo");
+            }}
+          >
+            Elimina
+          </Button>
         </div>
       ),
     },
   ];
 
   const addProduct = (product: any) => {
-    setProducts([...products, { id: products.length + 1, ...product, hasImage: true }]);
-    setIsAddingProduct(false);
+    // Find if the product exists in inventory ingredients for validation
+    const ingredientExists = inventoryIngredients.find(ing => 
+      ing.name.toLowerCase() === product.name.toLowerCase()
+    );
+    
+    if (ingredientExists) {
+      setProducts([...products, { id: products.length + 1, ...product, hasImage: true }]);
+      setIsAddingProduct(false);
+      toast.success("Prodotto aggiunto con successo");
+    } else {
+      // Allow adding even if not in inventory, but show a warning
+      setProducts([...products, { id: products.length + 1, ...product, hasImage: true }]);
+      setIsAddingProduct(false);
+      toast.warning("Prodotto non trovato nell'inventario ingredienti");
+    }
   };
 
   return (
@@ -96,7 +121,11 @@ const HACCPInventoryPage = () => {
                 Inserisci le informazioni del prodotto e carica una foto della confezione o dell'etichetta.
               </SheetDescription>
             </SheetHeader>
-            <AddProductForm onSubmit={addProduct} onCancel={() => setIsAddingProduct(false)} />
+            <AddProductForm 
+              onSubmit={addProduct} 
+              onCancel={() => setIsAddingProduct(false)}
+              inventoryIngredients={inventoryIngredients} 
+            />
           </SheetContent>
         </Sheet>
       </div>

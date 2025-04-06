@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusCircle, Edit, Trash2 } from "lucide-react";
+import { PlusCircle, Edit, Trash2, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { generateMockProducts, Product } from "@/types";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface MenuItem {
   id: string;
@@ -47,7 +49,9 @@ const MenuPage = () => {
     price: 0,
   });
   
-  const [newIngredient, setNewIngredient] = useState("");
+  const [searchIngredient, setSearchIngredient] = useState("");
+  const [isIngredientPopoverOpen, setIsIngredientPopoverOpen] = useState(false);
+  const [inventoryIngredients] = useState<Product[]>(generateMockProducts());
 
   const resetForm = () => {
     setIsEditing(false);
@@ -59,7 +63,7 @@ const MenuPage = () => {
       category: "",
       price: 0,
     });
-    setNewIngredient("");
+    setSearchIngredient("");
   };
 
   const handleEditItem = (item: MenuItem) => {
@@ -75,13 +79,18 @@ const MenuPage = () => {
     });
   };
 
-  const handleAddIngredient = () => {
-    if (newIngredient.trim() === "") return;
-    setCurrentItem({
-      ...currentItem,
-      ingredients: [...currentItem.ingredients, newIngredient.trim()]
-    });
-    setNewIngredient("");
+  const handleAddIngredient = (ingredient: string) => {
+    if (!ingredient.trim()) return;
+    
+    if (!currentItem.ingredients.includes(ingredient.trim())) {
+      setCurrentItem({
+        ...currentItem,
+        ingredients: [...currentItem.ingredients, ingredient.trim()]
+      });
+    }
+    
+    setSearchIngredient("");
+    setIsIngredientPopoverOpen(false);
   };
 
   const handleRemoveIngredient = (index: number) => {
@@ -118,6 +127,14 @@ const MenuPage = () => {
     
     resetForm();
   };
+
+  // Filter ingredients from inventory based on search
+  const filteredIngredients = inventoryIngredients
+    .filter(ing => 
+      ing.name.toLowerCase().includes(searchIngredient.toLowerCase()) &&
+      !currentItem.ingredients.includes(ing.name)
+    )
+    .slice(0, 5); // Limit to 5 results for better UX
 
   return (
     <div className="container py-6">
@@ -222,22 +239,51 @@ const MenuPage = () => {
                 <div>
                   <label htmlFor="dish-ingredient" className="block text-sm font-medium mb-1">Ingredienti</label>
                   <div className="flex space-x-2 mb-2">
-                    <Input 
-                      id="dish-ingredient"
-                      value={newIngredient}
-                      onChange={(e) => setNewIngredient(e.target.value)}
-                      placeholder="Aggiungi ingrediente"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          handleAddIngredient();
-                        }
-                      }}
-                    />
+                    <Popover open={isIngredientPopoverOpen} onOpenChange={setIsIngredientPopoverOpen}>
+                      <PopoverTrigger asChild>
+                        <div className="relative flex-1">
+                          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input 
+                            placeholder="Cerca ingredienti..."
+                            value={searchIngredient}
+                            onChange={(e) => {
+                              setSearchIngredient(e.target.value);
+                              setIsIngredientPopoverOpen(true);
+                            }}
+                            className="pl-10"
+                            onFocus={() => setIsIngredientPopoverOpen(true)}
+                          />
+                        </div>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-full p-0" align="start">
+                        {filteredIngredients.length > 0 ? (
+                          <div className="py-2">
+                            {filteredIngredients.map((ing) => (
+                              <button
+                                key={ing.id}
+                                type="button"
+                                className="w-full text-left px-4 py-2 text-sm hover:bg-muted"
+                                onClick={() => handleAddIngredient(ing.name)}
+                              >
+                                {ing.name} ({ing.unit})
+                              </button>
+                            ))}
+                          </div>
+                        ) : searchIngredient ? (
+                          <div className="px-4 py-3 text-sm text-muted-foreground">
+                            Nessun ingrediente trovato
+                          </div>
+                        ) : (
+                          <div className="px-4 py-3 text-sm text-muted-foreground">
+                            Inizia a digitare per cercare
+                          </div>
+                        )}
+                      </PopoverContent>
+                    </Popover>
                     <Button 
                       type="button" 
                       size="sm" 
-                      onClick={handleAddIngredient}
+                      onClick={() => handleAddIngredient(searchIngredient)}
                       aria-label="Aggiungi ingrediente"
                     >
                       <PlusCircle className="h-4 w-4" />
