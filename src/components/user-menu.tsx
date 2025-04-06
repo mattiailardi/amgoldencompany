@@ -9,10 +9,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, Settings } from "lucide-react";
+import { User, LogOut, Settings, AlertTriangle } from "lucide-react";
 
 export function UserMenu() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, isConfigured } = useAuth();
+  
+  if (!isConfigured) {
+    return (
+      <Button variant="destructive" className="flex items-center gap-2" disabled>
+        <AlertTriangle className="h-4 w-4" />
+        <span className="text-sm">Configurazione Supabase incompleta</span>
+      </Button>
+    );
+  }
   
   if (!user) {
     return null;
