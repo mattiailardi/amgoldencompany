@@ -1,23 +1,22 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Search, Upload, ListFilter } from "lucide-react";
 import { Product, ProductCategory, generateMockCategories, generateMockProducts } from "@/types";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerTrigger } from "@/components/ui/drawer";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DataTable } from "@/components/data-table";
 
-// Import our new components
+// Import our components
 import { InventoryStats } from "@/components/inventory/InventoryStats";
 import { ProductForm } from "@/components/inventory/ProductForm";
-import { CategoryForm } from "@/components/inventory/CategoryForm";
 import { InventoryTable } from "@/components/inventory/InventoryTable";
 import { LowStockTable } from "@/components/inventory/LowStockTable";
+import { InventoryHeader } from "@/components/inventory/InventoryHeader";
+import { SearchAndActions } from "@/components/inventory/SearchAndActions";
+import { CategoryManager } from "@/components/inventory/CategoryManager";
+import { AddStockForm } from "@/components/inventory/AddStockForm";
 
 export function InventoryPage() {
   const navigate = useNavigate();
@@ -132,6 +131,7 @@ export function InventoryPage() {
     toast.success(`Aggiunto ${quantity} ${product?.unit} di ${product?.name} al magazzino`);
   };
 
+  // Prepare categories with count for display
   const categoriesWithCount = categories.map(category => {
     const count = products.filter(p => p.categoryId === category.id).length;
     return { ...category, productCount: count };
@@ -139,127 +139,21 @@ export function InventoryPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Gestione Magazzino Ingredienti</h1>
-        <div className="flex items-center gap-2">
-          <Button 
-            variant="outline" 
-            className="gap-2 border-gold-300"
-            onClick={() => navigate("/inventory/import")}
-          >
-            <Upload className="h-4 w-4" />
-            Importa CSV
-          </Button>
-          
-          <Drawer open={isManagingCategories} onOpenChange={setIsManagingCategories}>
-            <DrawerTrigger asChild>
-              <Button variant="outline" className="gap-2 border-gold-300">
-                <ListFilter className="h-4 w-4" />
-                Gestisci Categorie
-              </Button>
-            </DrawerTrigger>
-            <DrawerContent>
-              <div className="mx-auto w-full max-w-4xl">
-                <DrawerHeader className="text-left">
-                  <DrawerTitle>Gestione Categorie</DrawerTitle>
-                  <DrawerDescription>
-                    Gestisci le categorie degli ingredienti del magazzino
-                  </DrawerDescription>
-                </DrawerHeader>
-                <div className="p-4 pb-8">
-                  <div className="flex justify-end mb-4">
-                    <Sheet open={isAddingCategory} onOpenChange={setIsAddingCategory}>
-                      <Button size="sm" onClick={() => setIsAddingCategory(true)} className="bg-primary hover:bg-primary/90">
-                        Nuova Categoria
-                      </Button>
-                      <SheetContent>
-                        <SheetHeader>
-                          <SheetTitle>Aggiungi Nuova Categoria</SheetTitle>
-                          <SheetDescription>
-                            Crea una nuova categoria per organizzare gli ingredienti
-                          </SheetDescription>
-                        </SheetHeader>
-                        <div className="py-6">
-                          <CategoryForm 
-                            onSave={handleAddCategory}
-                            onCancel={() => setIsAddingCategory(false)}
-                          />
-                        </div>
-                      </SheetContent>
-                    </Sheet>
-                  </div>
-                  
-                  <DataTable
-                    data={categoriesWithCount}
-                    columns={[
-                      { header: "ID", accessorKey: "id" },
-                      { header: "Nome", accessorKey: "name" },
-                      { 
-                        header: "Prodotti", 
-                        accessorKey: "productCount",
-                        cell: (row) => (
-                          <div className="bg-muted px-2 py-1 rounded text-center">
-                            {row.productCount} ingredienti
-                          </div>
-                        )
-                      },
-                      {
-                        header: "Azioni",
-                        accessorKey: "id",
-                        id: "categoryActions",
-                        cell: (row) => (
-                          <div className="flex items-center gap-2">
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              onClick={() => navigate(`/inventory/category/edit/${row.id}`)}
-                              className="hover:text-primary"
-                            >
-                              Modifica
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                              onClick={() => handleDeleteCategory(row.id)}
-                              disabled={row.productCount > 0}
-                            >
-                              Elimina
-                            </Button>
-                          </div>
-                        )
-                      },
-                    ]}
-                    searchKey="name"
-                  />
-                </div>
-              </div>
-            </DrawerContent>
-          </Drawer>
-        </div>
-      </div>
+      {/* Header with action buttons */}
+      <InventoryHeader 
+        title="Gestione Magazzino Ingredienti"
+        onManageCategories={() => setIsManagingCategories(true)}
+      />
 
       {/* Stats Cards */}
       <InventoryStats products={products} />
 
-      {/* Search */}
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Cerca ingredienti..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 border-gold-300"
-          />
-        </div>
-        <Button 
-          onClick={() => setIsAddingProduct(true)}
-          className="bg-primary hover:bg-primary/90"
-        >
-          Aggiungi Ingrediente
-        </Button>
-      </div>
+      {/* Search and Actions */}
+      <SearchAndActions 
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onAddProduct={() => setIsAddingProduct(true)}
+      />
 
       {/* Tabs for All Products and Low Stock */}
       <Tabs defaultValue="all" className="w-full">
@@ -349,6 +243,28 @@ export function InventoryPage() {
         </SheetContent>
       </Sheet>
 
+      {/* Manage Categories Drawer */}
+      <Drawer open={isManagingCategories} onOpenChange={setIsManagingCategories}>
+        <DrawerTrigger className="hidden" />
+        <DrawerContent>
+          <div className="mx-auto w-full max-w-4xl">
+            <DrawerHeader className="text-left">
+              <DrawerTitle>Gestione Categorie</DrawerTitle>
+              <DrawerDescription>
+                Gestisci le categorie degli ingredienti del magazzino
+              </DrawerDescription>
+            </DrawerHeader>
+            <CategoryManager 
+              categories={categoriesWithCount}
+              isAddingCategory={isAddingCategory}
+              setIsAddingCategory={setIsAddingCategory}
+              onAddCategory={handleAddCategory}
+              onDeleteCategory={handleDeleteCategory}
+            />
+          </div>
+        </DrawerContent>
+      </Drawer>
+
       {/* Add Stock Sheet */}
       <Sheet 
         open={isAddingStock} 
@@ -366,76 +282,15 @@ export function InventoryPage() {
               Aggiungi quantità al prodotto selezionato
             </SheetDescription>
           </SheetHeader>
-          <div className="py-6 space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="product" className="text-sm font-medium">
-                Prodotto
-              </label>
-              <Select 
-                value={selectedProductForStock?.toString() || ""} 
-                onValueChange={(value) => setSelectedProductForStock(parseInt(value))}
-              >
-                <SelectTrigger className="border-gold-300">
-                  <SelectValue placeholder="Seleziona prodotto" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map(category => (
-                    <React.Fragment key={`category-${category.id}`}>
-                      <SelectItem value={`category-${category.id}`} disabled className="font-bold">
-                        {category.name}
-                      </SelectItem>
-                      {products
-                        .filter(p => p.categoryId === category.id)
-                        .map(product => (
-                          <SelectItem key={product.id} value={product.id.toString()} className="pl-6">
-                            {product.name} ({product.currentQuantity} {product.unit})
-                          </SelectItem>
-                        ))}
-                    </React.Fragment>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <label htmlFor="quantity" className="text-sm font-medium">
-                Quantità da aggiungere
-              </label>
-              <Input 
-                id="quantity" 
-                type="number" 
-                min="0.01" 
-                step="0.01" 
-                defaultValue="1"
-                className="border-gold-300"
-              />
-            </div>
-            
-            <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={() => setIsAddingStock(false)}>
-                Annulla
-              </Button>
-              <Button 
-                onClick={() => {
-                  if (selectedProductForStock) {
-                    const quantityEl = document.getElementById('quantity') as HTMLInputElement;
-                    const quantity = parseFloat(quantityEl.value);
-                    
-                    if (isNaN(quantity) || quantity <= 0) {
-                      toast.error("Inserisci una quantità valida");
-                      return;
-                    }
-                    
-                    handleSaveAddedStock(selectedProductForStock, quantity);
-                  } else {
-                    toast.error("Seleziona un prodotto");
-                  }
-                }}
-                className="bg-primary hover:bg-primary/90"
-              >
-                Aggiungi
-              </Button>
-            </div>
+          <div className="py-6">
+            <AddStockForm 
+              products={products}
+              categories={categories}
+              selectedProductId={selectedProductForStock}
+              onSelectProduct={setSelectedProductForStock}
+              onSave={handleSaveAddedStock}
+              onCancel={() => setIsAddingStock(false)}
+            />
           </div>
         </SheetContent>
       </Sheet>
