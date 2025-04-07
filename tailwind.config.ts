@@ -63,19 +63,19 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Add our custom teal colors
-				teal: {
-					50: '#f0fdfa',
-					100: '#ccfbf1',
-					200: '#99f6e4',
-					300: '#5eead4',
-					400: '#2dd4bf',
-					500: '#14b8a6',
-					600: '#0d9488',
-					700: '#0f766e',
-					800: '#115e59',
-					900: '#134e4a',
-					950: '#042f2e',
+				// Gold color palette
+				gold: {
+					50: '#fef9e7',
+					100: '#fdf2c7',
+					200: '#fbe592',
+					300: '#f9d35c',
+					400: '#f7c026',
+					500: '#e6b118',
+					600: '#bd8d10',
+					700: '#946a0c',
+					800: '#6c470a',
+					900: '#442408',
+					950: '#2a1705',
 				},
 			},
 			borderRadius: {

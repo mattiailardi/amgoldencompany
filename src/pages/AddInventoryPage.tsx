@@ -43,7 +43,7 @@ export function AddInventoryPage() {
         <h1 className="text-2xl font-bold">Aggiungi al Magazzino</h1>
       </div>
       
-      <Card>
+      <Card className="border-gold-300">
         <CardHeader>
           <CardTitle>Rifornimento Prodotto</CardTitle>
         </CardHeader>
@@ -55,7 +55,7 @@ export function AddInventoryPage() {
                 value={selectedProduct?.toString() || ""} 
                 onValueChange={(value) => setSelectedProduct(parseInt(value))}
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-gold-300">
                   <SelectValue placeholder="Seleziona prodotto" />
                 </SelectTrigger>
                 <SelectContent>
@@ -86,7 +86,8 @@ export function AddInventoryPage() {
                 step="0.01" 
                 value={quantity} 
                 onChange={(e) => setQuantity(e.target.value)} 
-                required 
+                required
+                className="border-gold-300" 
               />
             </div>
           </CardContent>
@@ -95,10 +96,11 @@ export function AddInventoryPage() {
               type="button" 
               variant="outline" 
               onClick={() => navigate("/inventory")}
+              className="border-gold-300"
             >
               Annulla
             </Button>
-            <Button type="submit">
+            <Button type="submit" className="bg-primary hover:bg-primary/90">
               Aggiungi
             </Button>
           </CardFooter>
