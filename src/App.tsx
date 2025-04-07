@@ -32,6 +32,8 @@ import MenuPage from "@/pages/MenuPage";
 import FoodCostPage from "@/pages/FoodCostPage";
 import SettingsPage from "@/pages/SettingsPage";
 import AssistentePage from "@/pages/AssistentePage";
+import AccountPage from "@/pages/AccountPage";
+import DailyReportPage from "@/pages/DailyReportPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -79,6 +81,7 @@ const AppRoutes = () => (
     <Route path="/accounting" element={<ProtectedRoute><AccountingPage /></ProtectedRoute>} />
     <Route path="/accounting/daily" element={<ProtectedRoute><AccountingDailyPage /></ProtectedRoute>} />
     <Route path="/accounting/categories" element={<ProtectedRoute><AccountingCategoriesPage /></ProtectedRoute>} />
+    <Route path="/accounting/report/:date" element={<ProtectedRoute><DailyReportPage /></ProtectedRoute>} />
     <Route path="/haccp" element={<ProtectedRoute><HACCPPage /></ProtectedRoute>} />
     <Route path="/haccp/hygiene" element={<ProtectedRoute><HACCPHygienePage /></ProtectedRoute>} />
     <Route path="/haccp/inventory" element={<ProtectedRoute><HACCPInventoryPage /></ProtectedRoute>} />
@@ -88,6 +91,7 @@ const AppRoutes = () => (
     <Route path="/menu/food-cost" element={<ProtectedRoute><FoodCostPage /></ProtectedRoute>} />
     <Route path="/assistente" element={<ProtectedRoute><AssistentePage /></ProtectedRoute>} />
     <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+    <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );

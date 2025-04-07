@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   BarChart,
@@ -17,6 +17,7 @@ import {
   Bot
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/auth-context";
 
 interface SidebarProps {
   className?: string;
@@ -25,6 +26,8 @@ interface SidebarProps {
 export function Sidebar({ className }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const routes = [
     {
@@ -90,6 +93,10 @@ export function Sidebar({ className }: SidebarProps) {
     }
   ];
 
+  const handleProfileClick = () => {
+    navigate("/account");
+  };
+
   return (
     <div className={cn(
       "bg-white border-r border-gray-200 flex flex-col h-full transition-all duration-300",
@@ -154,15 +161,23 @@ export function Sidebar({ className }: SidebarProps) {
         </nav>
       </div>
 
-      <div className="p-4 border-t border-gray-200">
+      <div 
+        className={cn(
+          "p-4 border-t border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors",
+          collapsed ? "text-center" : ""
+        )}
+        onClick={handleProfileClick}
+      >
         <div className={cn("flex items-center gap-3",
           collapsed ? "justify-center" : "px-3"
         )}>
-          <div className="h-8 w-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-700 font-medium">A</div>
+          <div className="h-8 w-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-700 font-medium">
+            {user?.email?.charAt(0).toUpperCase() || 'A'}
+          </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="text-sm font-medium">Admin</span>
-              <span className="text-xs text-gray-500">admin@pizzapro.it</span>
+              <span className="text-sm font-medium">{user?.email?.split('@')[0] || 'Admin'}</span>
+              <span className="text-xs text-gray-500">{user?.email || 'admin@pizzapro.it'}</span>
             </div>
           )}
         </div>

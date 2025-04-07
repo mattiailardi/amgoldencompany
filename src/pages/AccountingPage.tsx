@@ -35,35 +35,35 @@ import {
 
 // Mock data for the accounting overview
 const mockWeeklyData = [
-  { day: "Lunedì", income: 850.50, expenses: 320.25, profit: 530.25 },
-  { day: "Martedì", income: 920.00, expenses: 450.75, profit: 469.25 },
-  { day: "Mercoledì", income: 1150.75, expenses: 380.50, profit: 770.25 },
-  { day: "Giovedì", income: 1320.25, expenses: 425.00, profit: 895.25 },
-  { day: "Venerdì", income: 1580.00, expenses: 560.25, profit: 1019.75 },
-  { day: "Sabato", income: 1950.50, expenses: 620.75, profit: 1329.75 },
-  { day: "Domenica", income: 1420.75, expenses: 480.25, profit: 940.50 },
+  { day: "Lunedì", income: 850.50, expenses: 320.25, profit: 530.25, date: "2025-04-01" },
+  { day: "Martedì", income: 920.00, expenses: 450.75, profit: 469.25, date: "2025-04-02" },
+  { day: "Mercoledì", income: 1150.75, expenses: 380.50, profit: 770.25, date: "2025-04-03" },
+  { day: "Giovedì", income: 1320.25, expenses: 425.00, profit: 895.25, date: "2025-04-04" },
+  { day: "Venerdì", income: 1580.00, expenses: 560.25, profit: 1019.75, date: "2025-04-05" },
+  { day: "Sabato", income: 1950.50, expenses: 620.75, profit: 1329.75, date: "2025-04-06" },
+  { day: "Domenica", income: 1420.75, expenses: 480.25, profit: 940.50, date: "2025-04-07" },
 ];
 
 const mockMonthlyData = [
-  { week: "Settimana 1", income: 8050.50, expenses: 3220.25, profit: 4830.25 },
-  { week: "Settimana 2", income: 8920.00, expenses: 3450.75, profit: 5469.25 },
-  { week: "Settimana 3", income: 9150.75, expenses: 3580.50, profit: 5570.25 },
-  { week: "Settimana 4", income: 9320.25, expenses: 3425.00, profit: 5895.25 },
+  { week: "Settimana 1", income: 8050.50, expenses: 3220.25, profit: 4830.25, date: "2025-04-07" },
+  { week: "Settimana 2", income: 8920.00, expenses: 3450.75, profit: 5469.25, date: "2025-04-14" },
+  { week: "Settimana 3", income: 9150.75, expenses: 3580.50, profit: 5570.25, date: "2025-04-21" },
+  { week: "Settimana 4", income: 9320.25, expenses: 3425.00, profit: 5895.25, date: "2025-04-28" },
 ];
 
 const mockYearlyData = [
-  { month: "Gen", income: 32050.50, expenses: 12220.25, profit: 19830.25 },
-  { month: "Feb", income: 28920.00, expenses: 11450.75, profit: 17469.25 },
-  { month: "Mar", income: 34150.75, expenses: 13580.50, profit: 20570.25 },
-  { month: "Apr", income: 36320.25, expenses: 14425.00, profit: 21895.25 },
-  { month: "Mag", income: 38580.00, expenses: 15560.25, profit: 23019.75 },
-  { month: "Giu", income: 41950.50, expenses: 17620.75, profit: 24329.75 },
-  { month: "Lug", income: 45420.75, expenses: 18480.25, profit: 26940.50 },
-  { month: "Ago", income: 42150.75, expenses: 17580.50, profit: 24570.25 },
-  { month: "Set", income: 38320.25, expenses: 15425.00, profit: 22895.25 },
-  { month: "Ott", income: 35580.00, expenses: 14560.25, profit: 21019.75 },
-  { month: "Nov", income: 31950.50, expenses: 13620.75, profit: 18329.75 },
-  { month: "Dic", income: 39420.75, expenses: 16480.25, profit: 22940.50 },
+  { month: "Gen", income: 32050.50, expenses: 12220.25, profit: 19830.25, date: "2025-01-31" },
+  { month: "Feb", income: 28920.00, expenses: 11450.75, profit: 17469.25, date: "2025-02-28" },
+  { month: "Mar", income: 34150.75, expenses: 13580.50, profit: 20570.25, date: "2025-03-31" },
+  { month: "Apr", income: 36320.25, expenses: 14425.00, profit: 21895.25, date: "2025-04-30" },
+  { month: "Mag", income: 38580.00, expenses: 15560.25, profit: 23019.75, date: "2025-05-31" },
+  { month: "Giu", income: 41950.50, expenses: 17620.75, profit: 24329.75, date: "2025-06-30" },
+  { month: "Lug", income: 45420.75, expenses: 18480.25, profit: 26940.50, date: "2025-07-31" },
+  { month: "Ago", income: 42150.75, expenses: 17580.50, profit: 24570.25, date: "2025-08-31" },
+  { month: "Set", income: 38320.25, expenses: 15425.00, profit: 22895.25, date: "2025-09-30" },
+  { month: "Ott", income: 35580.00, expenses: 14560.25, profit: 21019.75, date: "2025-10-31" },
+  { month: "Nov", income: 31950.50, expenses: 13620.75, profit: 18329.75, date: "2025-11-30" },
+  { month: "Dic", income: 39420.75, expenses: 16480.25, profit: 22940.50, date: "2025-12-31" },
 ];
 
 // Top expense and income categories
@@ -139,6 +139,13 @@ const AccountingPage = () => {
       return format(currentDate, "MMMM yyyy", { locale: it });
     } else {
       return format(currentDate, "yyyy");
+    }
+  };
+
+  // Handle bar click to navigate to daily report
+  const handleBarClick = (data: any) => {
+    if (data && data.date) {
+      navigate(`/accounting/report/${data.date}`);
     }
   };
 
@@ -261,18 +268,24 @@ const AccountingPage = () => {
                       fill="var(--color-income)" 
                       radius={[4, 4, 0, 0]} 
                       name="Entrate"
+                      onClick={handleBarClick}
+                      style={{ cursor: 'pointer' }}
                     />
                     <Bar 
                       dataKey="expenses" 
                       fill="var(--color-expenses)" 
                       radius={[4, 4, 0, 0]} 
                       name="Uscite"
+                      onClick={handleBarClick}
+                      style={{ cursor: 'pointer' }}
                     />
                     <Bar 
                       dataKey="profit" 
                       fill="var(--color-profit)" 
                       radius={[4, 4, 0, 0]} 
                       name="Profitto"
+                      onClick={handleBarClick}
+                      style={{ cursor: 'pointer' }}
                     />
                     <ChartTooltip
                       content={<ChartTooltipContent />}
@@ -280,6 +293,9 @@ const AccountingPage = () => {
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
+              <div className="text-center text-sm text-muted-foreground mt-2">
+                Clicca su una barra per visualizzare il report dettagliato giornaliero
+              </div>
             </CardContent>
           </Card>
 
@@ -351,18 +367,24 @@ const AccountingPage = () => {
                       fill="var(--color-income)" 
                       radius={[4, 4, 0, 0]} 
                       name="Entrate"
+                      onClick={handleBarClick}
+                      style={{ cursor: 'pointer' }}
                     />
                     <Bar 
                       dataKey="expenses" 
                       fill="var(--color-expenses)" 
                       radius={[4, 4, 0, 0]} 
                       name="Uscite"
+                      onClick={handleBarClick}
+                      style={{ cursor: 'pointer' }}
                     />
                     <Bar 
                       dataKey="profit" 
                       fill="var(--color-profit)" 
                       radius={[4, 4, 0, 0]} 
                       name="Profitto"
+                      onClick={handleBarClick}
+                      style={{ cursor: 'pointer' }}
                     />
                     <ChartTooltip
                       content={<ChartTooltipContent />}
@@ -370,6 +392,9 @@ const AccountingPage = () => {
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
+              <div className="text-center text-sm text-muted-foreground mt-2">
+                Clicca su una barra per visualizzare il report dettagliato del periodo
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -407,7 +432,7 @@ const AccountingPage = () => {
                       dataKey="income" 
                       stroke="var(--color-income)" 
                       strokeWidth={2}
-                      dot={{ r: 4 }}
+                      dot={{ r: 4, onClick: handleBarClick, style: { cursor: 'pointer' } }}
                       name="Entrate"
                     />
                     <Line 
@@ -415,7 +440,7 @@ const AccountingPage = () => {
                       dataKey="expenses" 
                       stroke="var(--color-expenses)" 
                       strokeWidth={2}
-                      dot={{ r: 4 }}
+                      dot={{ r: 4, onClick: handleBarClick, style: { cursor: 'pointer' } }}
                       name="Uscite"
                     />
                     <Line 
@@ -423,7 +448,7 @@ const AccountingPage = () => {
                       dataKey="profit" 
                       stroke="var(--color-profit)" 
                       strokeWidth={2}
-                      dot={{ r: 4 }}
+                      dot={{ r: 4, onClick: handleBarClick, style: { cursor: 'pointer' } }}
                       name="Profitto"
                     />
                     <ChartTooltip
@@ -432,6 +457,9 @@ const AccountingPage = () => {
                   </LineChart>
                 </ResponsiveContainer>
               </ChartContainer>
+              <div className="text-center text-sm text-muted-foreground mt-2">
+                Clicca su un punto per visualizzare il report dettagliato mensile
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

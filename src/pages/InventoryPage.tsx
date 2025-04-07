@@ -10,7 +10,7 @@ import { DataTable } from "@/components/data-table";
 import { Plus, Search, Upload, Edit, Trash, ListFilter } from "lucide-react";
 import { Product, ProductCategory, generateMockCategories, generateMockProducts } from "@/types";
 import { toast } from "sonner";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
@@ -176,10 +176,10 @@ export function InventoryPage() {
                               placeholder="Es. Latticini"
                             />
                           </div>
-                          <div className="flex justify-end space-x-2 pt-4">
+                          <SheetFooter className="pt-4">
                             <Button variant="outline" onClick={() => setIsAddingCategory(false)}>Annulla</Button>
                             <Button onClick={handleAddCategory}>Aggiungi Categoria</Button>
-                          </div>
+                          </SheetFooter>
                         </div>
                       </SheetContent>
                     </Sheet>
@@ -334,10 +334,10 @@ export function InventoryPage() {
                     placeholder="Dettagli aggiuntivi sull'ingrediente"
                   />
                 </div>
-                <div className="flex justify-end space-x-2 pt-4">
+                <SheetFooter className="pt-4">
                   <Button variant="outline" onClick={() => setIsAddingProduct(false)}>Annulla</Button>
                   <Button onClick={handleAddProduct}>Aggiungi Ingrediente</Button>
-                </div>
+                </SheetFooter>
               </div>
             </SheetContent>
           </Sheet>
