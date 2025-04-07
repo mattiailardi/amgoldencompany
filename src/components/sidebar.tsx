@@ -13,7 +13,8 @@ import {
   Settings,
   ShoppingCart,
   Users,
-  Utensils
+  Utensils,
+  Bot
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -76,6 +77,11 @@ export function Sidebar({ className }: SidebarProps) {
       name: "Personale",
       path: "/employees",
       icon: <Users className="h-5 w-5" />,
+    },
+    {
+      name: "Assistente",
+      path: "/assistente",
+      icon: <Bot className="h-5 w-5" />,
     },
     {
       name: "Impostazioni",

@@ -31,6 +31,7 @@ import EmployeesPage from "@/pages/EmployeesPage";
 import MenuPage from "@/pages/MenuPage";
 import FoodCostPage from "@/pages/FoodCostPage";
 import SettingsPage from "@/pages/SettingsPage";
+import AssistentePage from "@/pages/AssistentePage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -85,6 +86,7 @@ const AppRoutes = () => (
     <Route path="/employees" element={<ProtectedRoute><EmployeesPage /></ProtectedRoute>} />
     <Route path="/menu" element={<ProtectedRoute><MenuPage /></ProtectedRoute>} />
     <Route path="/menu/food-cost" element={<ProtectedRoute><FoodCostPage /></ProtectedRoute>} />
+    <Route path="/assistente" element={<ProtectedRoute><AssistentePage /></ProtectedRoute>} />
     <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
     <Route path="*" element={<NotFound />} />
   </Routes>
