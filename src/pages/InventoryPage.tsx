@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,8 @@ import { Search, Upload, ListFilter } from "lucide-react";
 import { Product, ProductCategory, generateMockCategories, generateMockProducts } from "@/types";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerTrigger } from "@/components/ui/drawer";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DataTable } from "@/components/data-table";
 
 // Import our new components
 import { InventoryStats } from "@/components/inventory/InventoryStats";
@@ -229,6 +230,7 @@ export function InventoryPage() {
                         )
                       },
                     ]}
+                    searchKey="name"
                   />
                 </div>
               </div>
