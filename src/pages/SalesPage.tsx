@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,10 +7,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Plus, Calendar as CalendarIcon, BarChart3 } from "lucide-react";
 import { DataTable } from "@/components/data-table";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
+import { useSupabaseQuery } from "@/hooks/use-supabase-query";
 
 // Mock data for sales
 const mockSalesData = [
@@ -51,6 +52,7 @@ const getDailyChartData = () => {
 };
 
 const SalesPage = () => {
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [activeTab, setActiveTab] = useState("overview");
   
@@ -85,6 +87,15 @@ const SalesPage = () => {
       },
     }
   };
+
+  // Handle chart bar click to navigate to daily report
+  const handleBarClick = useCallback((data: any) => {
+    if (data && data.activePayload && data.activePayload.length > 0) {
+      const clickedDate = data.activePayload[0].payload.date;
+      const formattedDate = clickedDate.split('/').reverse().join('-');
+      navigate(`/accounting/report/2025-04-${formattedDate.substring(0, 2)}`);
+    }
+  }, [navigate]);
 
   return (
     <div className="p-6 space-y-6">
@@ -173,16 +184,28 @@ const SalesPage = () => {
               <div className="h-[300px]">
                 <ChartContainer config={chartConfig}>
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={getDailyChartData()}>
+                    <BarChart 
+                      data={getDailyChartData()}
+                      onClick={handleBarClick}
+                    >
                       <XAxis dataKey="date" />
                       <YAxis />
-                      <ChartTooltip
+                      <Tooltip 
                         content={<ChartTooltipContent />}
+                        cursor={{fill: 'rgba(0, 0, 0, 0.1)'}}
                       />
-                      <Bar dataKey="value" name="sales" fill="var(--color-sales)" />
+                      <Bar 
+                        dataKey="value" 
+                        name="sales" 
+                        fill="var(--color-sales)" 
+                        style={{ cursor: 'pointer' }}
+                      />
                     </BarChart>
                   </ResponsiveContainer>
                 </ChartContainer>
+              </div>
+              <div className="text-center text-xs text-slate-500 mt-2">
+                Clicca su una barra per vedere il report dettagliato del giorno
               </div>
             </CardContent>
           </Card>
@@ -248,13 +271,22 @@ const SalesPage = () => {
 
                   <Separator />
                   
-                  <div>
+                  <div className="flex gap-2">
                     <Link to="/sales/new">
                       <Button size="sm" variant="outline">
                         <Plus className="mr-1 h-4 w-4" />
-                        Aggiungi vendite per questa data
+                        Aggiungi vendite
                       </Button>
                     </Link>
+                    
+                    {selectedDate && mockSalesData.some(sale => sale.date === format(selectedDate, 'yyyy-MM-dd')) && (
+                      <Link to={`/accounting/report/${format(selectedDate, 'yyyy-MM-dd')}`}>
+                        <Button size="sm" variant="secondary">
+                          <BarChart3 className="mr-1 h-4 w-4" />
+                          Report dettagliato
+                        </Button>
+                      </Link>
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -295,9 +327,7 @@ const SalesPage = () => {
                       <BarChart data={getCategoryChartData()}>
                         <XAxis dataKey="name" />
                         <YAxis />
-                        <ChartTooltip
-                          content={<ChartTooltipContent />}
-                        />
+                        <Tooltip content={<ChartTooltipContent />} />
                         <Bar dataKey="value" name="sales" fill="var(--color-sales)" />
                       </BarChart>
                     </ResponsiveContainer>

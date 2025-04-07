@@ -16,6 +16,7 @@ import EditCategoryPage from "@/pages/EditCategoryPage";
 import AddInventoryPage from "@/pages/AddInventoryPage";
 import ImportCSVPage from "@/pages/ImportCSVPage";
 import CustomersPage from "@/pages/CustomersPage";
+import CustomerDetailPage from "@/pages/CustomerDetailPage";
 import OrdersPage from "@/pages/OrdersPage";
 import SalesPage from "@/pages/SalesPage";
 import NewSalePage from "@/pages/NewSalePage";
@@ -74,6 +75,7 @@ const AppRoutes = () => (
     <Route path="/inventory/add" element={<ProtectedRoute><AddInventoryPage /></ProtectedRoute>} />
     <Route path="/inventory/import" element={<ProtectedRoute><ImportCSVPage /></ProtectedRoute>} />
     <Route path="/customers" element={<ProtectedRoute><CustomersPage /></ProtectedRoute>} />
+    <Route path="/customers/:id" element={<ProtectedRoute><CustomerDetailPage /></ProtectedRoute>} />
     <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
     <Route path="/sales" element={<ProtectedRoute><SalesPage /></ProtectedRoute>} />
     <Route path="/sales/new" element={<ProtectedRoute><NewSalePage /></ProtectedRoute>} />

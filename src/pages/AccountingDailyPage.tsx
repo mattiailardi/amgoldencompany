@@ -21,6 +21,8 @@ import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import SalesTransactions from "@/components/sales-transactions";
 
 // Mock data for transactions
 const mockTransactions = [
@@ -102,6 +104,7 @@ const AccountingDailyPage = () => {
   const [amount, setAmount] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("transactions");
 
   // Filter transactions based on the selected date
   const formattedSelectedDate = format(selectedDate, "yyyy-MM-dd");
@@ -147,11 +150,6 @@ const AccountingDailyPage = () => {
 
   // Table columns for transactions
   const columns = [
-    { 
-      header: "Data", 
-      accessorKey: "date", 
-      cell: (row: any) => format(new Date(row.date), 'dd/MM/yyyy') 
-    },
     { 
       header: "Tipo", 
       accessorKey: "type", 
@@ -204,7 +202,7 @@ const AccountingDailyPage = () => {
       <div className="flex items-center space-x-2 mb-4">
         <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
           <PopoverTrigger asChild>
-            <Button variant="outline" className="w-[220px] justify-start text-left font-normal">
+            <Button variant="outline" className="w-[250px] justify-start text-left font-normal">
               <Calendar className="mr-2 h-4 w-4" />
               {format(selectedDate, "dd MMMM yyyy", { locale: it })}
             </Button>
@@ -221,6 +219,13 @@ const AccountingDailyPage = () => {
             />
           </PopoverContent>
         </Popover>
+
+        <Button 
+          variant="outline" 
+          onClick={() => navigate(`/accounting/report/${format(selectedDate, 'yyyy-MM-dd')}`)}
+        >
+          Report dettagliato
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -336,12 +341,33 @@ const AccountingDailyPage = () => {
 
       <Separator />
 
-      <h2 className="text-xl font-semibold">Transazioni del {format(selectedDate, "dd MMMM yyyy", { locale: it })}</h2>
-      
-      <DataTable 
-        columns={columns} 
-        data={filteredTransactions}
-      />
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="mb-4">
+          <TabsTrigger value="transactions">Transazioni</TabsTrigger>
+          <TabsTrigger value="sales">Vendite</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="transactions">
+          <h2 className="text-xl font-semibold mb-4">Transazioni del {format(selectedDate, "dd MMMM yyyy", { locale: it })}</h2>
+          
+          {filteredTransactions.length > 0 ? (
+            <DataTable 
+              columns={columns} 
+              data={filteredTransactions}
+            />
+          ) : (
+            <Card className="py-8">
+              <CardContent className="text-center">
+                <p className="text-muted-foreground">Nessuna transazione registrata per questa data.</p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="sales">
+          <SalesTransactions date={formattedSelectedDate} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

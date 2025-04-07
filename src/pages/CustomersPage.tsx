@@ -1,11 +1,12 @@
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DataTable } from "@/components/data-table";
-import { Download, MapPin, Plus, Search, Upload } from "lucide-react";
+import { Download, MapPin, Plus, Search, Upload, User, ChevronRight } from "lucide-react";
 import { Customer, CustomerType, generateMockCustomers } from "@/types";
 
 export function CustomersPage() {
@@ -125,11 +126,13 @@ export function CustomersPage() {
               {
                 header: "Azioni",
                 accessorKey: "id",
-                cell: () => (
+                cell: (row) => (
                   <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="sm">
-                      Dettagli
-                    </Button>
+                    <Link to={`/customers/${row.id}`}>
+                      <Button variant="ghost" size="sm">
+                        Dettagli
+                      </Button>
+                    </Link>
                     <Button variant="ghost" size="sm">
                       Modifica
                     </Button>
