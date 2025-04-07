@@ -426,12 +426,13 @@ const DailyReportPage = () => {
                   },
                   {
                     header: "Margine",
+                    accessorKey: "profit", // Aggiunto accessorKey qui per risolvere l'errore
                     id: "margin",
                     cell: (row) => {
                       const margin = (row.profit / row.revenue) * 100;
                       
                       return (
-                        <Badge variant={margin > 65 ? "success" : margin > 50 ? "outline" : "secondary"}>
+                        <Badge variant={margin > 65 ? "default" : margin > 50 ? "outline" : "secondary"}>
                           {margin.toFixed(1)}%
                         </Badge>
                       );
