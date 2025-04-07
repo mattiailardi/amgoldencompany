@@ -1,6 +1,6 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 
 // Hook generico per effettuare query al database
@@ -82,7 +82,7 @@ export function useSupabaseQuery<T>(
 }
 
 // Hook per aggiungere un nuovo record
-export function useSupabaseInsert<T, U>(tableName: string) {
+export function useSupabaseInsert<T, U extends Record<string, any>>(tableName: string) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
@@ -116,7 +116,7 @@ export function useSupabaseInsert<T, U>(tableName: string) {
 }
 
 // Hook per aggiornare un record esistente
-export function useSupabaseUpdate<T, U>(tableName: string, idColumn: string = 'id') {
+export function useSupabaseUpdate<T, U extends Record<string, any>>(tableName: string, idColumn: string = 'id') {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
