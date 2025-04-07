@@ -2,6 +2,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
+import { Database } from '@/integrations/supabase/types';
+
+type Tables = Database['public']['Tables'];
+type TableName = keyof Tables;
 
 // Hook generico per effettuare query al database
 export function useSupabaseQuery<T>(
@@ -21,8 +25,9 @@ export function useSupabaseQuery<T>(
   return useQuery({
     queryKey: key,
     queryFn: async (): Promise<T[]> => {
+      // Use type assertion to handle dynamic table name
       let query = supabase
-        .from(tableName)
+        .from(tableName as any)
         .select(options?.select || '*');
       
       // Applica filtri se specificati
@@ -88,9 +93,10 @@ export function useSupabaseInsert<T, U extends Record<string, any>>(tableName: s
   
   return useMutation({
     mutationFn: async (newItem: U): Promise<T> => {
+      // Use type assertion to handle dynamic table name
       const { data, error } = await supabase
-        .from(tableName)
-        .insert(newItem)
+        .from(tableName as any)
+        .insert(newItem as any)
         .select()
         .single();
       
@@ -122,9 +128,10 @@ export function useSupabaseUpdate<T, U extends Record<string, any>>(tableName: s
   
   return useMutation({
     mutationFn: async ({ id, ...item }: U & { id: string }): Promise<T> => {
+      // Use type assertion to handle dynamic table name
       const { data, error } = await supabase
-        .from(tableName)
-        .update(item)
+        .from(tableName as any)
+        .update(item as any)
         .eq(idColumn, id)
         .select()
         .single();
@@ -157,8 +164,9 @@ export function useSupabaseDelete(tableName: string, idColumn: string = 'id') {
   
   return useMutation({
     mutationFn: async (id: string): Promise<void> => {
+      // Use type assertion to handle dynamic table name
       const { error } = await supabase
-        .from(tableName)
+        .from(tableName as any)
         .delete()
         .eq(idColumn, id);
       
