@@ -27,6 +27,9 @@ export default {
           DEFAULT: '#ea384c',
           foreground: '#ffffff'
         },
+        foreground: {
+          DEFAULT: "hsl(var(--foreground))",
+        },
         primary: {
           DEFAULT: '#ffd700',
           foreground: '#ffffff'
@@ -80,3 +83,4 @@ export default {
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;
+
