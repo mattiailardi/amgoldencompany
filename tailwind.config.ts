@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -19,6 +20,9 @@ export default {
     },
     extend: {
       colors: {
+        border: {
+          DEFAULT: "#ffd700", // Using gold as border color to match design
+        },
         background: {
           DEFAULT: '#ea384c',
           foreground: '#ffffff'

@@ -13,6 +13,9 @@
     
     --cmr: 0 100% 27%; /* Dark Red */
     --cmr-foreground: 0 0% 100%;
+    
+    /* Adding border color variable */
+    --border: 51 100% 50%; /* Gold color for borders */
   }
 
   /* Dark mode could be added here if needed */

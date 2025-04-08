@@ -7,16 +7,18 @@ import { Upload, ListFilter } from "lucide-react";
 interface InventoryHeaderProps {
   title: string;
   onManageCategories: () => void;
+  className?: string; // Added className as an optional prop
 }
 
 export const InventoryHeader: React.FC<InventoryHeaderProps> = ({
   title,
-  onManageCategories
+  onManageCategories,
+  className = "" // Default empty string for className
 }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex justify-between items-center">
+    <div className={`flex justify-between items-center ${className}`}>
       <h1 className="text-2xl font-bold">{title}</h1>
       <div className="flex items-center gap-2">
         <Button 
