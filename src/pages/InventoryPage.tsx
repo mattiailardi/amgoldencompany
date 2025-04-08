@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -138,11 +137,12 @@ export function InventoryPage() {
   });
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 bg-background text-background-foreground">
       {/* Header with action buttons */}
       <InventoryHeader 
         title="Gestione Magazzino Ingredienti"
         onManageCategories={() => setIsManagingCategories(true)}
+        className="text-gold-500"
       />
 
       {/* Stats Cards */}
@@ -157,26 +157,26 @@ export function InventoryPage() {
 
       {/* Tabs for All Products and Low Stock */}
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid grid-cols-2 mb-6 md:w-[400px] bg-muted/50 border border-gold-300">
+        <TabsList className="grid grid-cols-2 mb-6 md:w-[400px] bg-cmr/10 border border-gold-300">
           <TabsTrigger 
             value="all" 
-            className="data-[state=active]:bg-primary data-[state=active]:text-white"
+            className="data-[state=active]:bg-gold data-[state=active]:text-cmr"
           >
             Tutti gli Ingredienti
           </TabsTrigger>
           <TabsTrigger 
             value="lowStock"
-            className="data-[state=active]:bg-primary data-[state=active]:text-white"
+            className="data-[state=active]:bg-gold data-[state=active]:text-cmr"
           >
             Sotto Scorta
           </TabsTrigger>
         </TabsList>
         
         <TabsContent value="all">
-          <Card className="border-gold-300">
-            <CardHeader>
-              <CardTitle>Inventario Completo</CardTitle>
-              <CardDescription>
+          <Card className="border-gold-300 bg-background/10">
+            <CardHeader className="bg-gold/20">
+              <CardTitle className="text-gold">Inventario Completo</CardTitle>
+              <CardDescription className="text-white">
                 Tutti gli ingredienti presenti in magazzino
               </CardDescription>
             </CardHeader>
@@ -193,10 +193,10 @@ export function InventoryPage() {
         </TabsContent>
         
         <TabsContent value="lowStock">
-          <Card className="border-gold-300">
-            <CardHeader>
-              <CardTitle>Ingredienti Sotto Scorta</CardTitle>
-              <CardDescription>
+          <Card className="border-gold-300 bg-background/10">
+            <CardHeader className="bg-gold/20">
+              <CardTitle className="text-gold">Ingredienti Sotto Scorta</CardTitle>
+              <CardDescription className="text-white">
                 Ingredienti che necessitano di rifornimento
               </CardDescription>
             </CardHeader>
