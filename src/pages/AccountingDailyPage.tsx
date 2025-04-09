@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
@@ -23,6 +22,8 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SalesTransactions from "@/components/sales-transactions";
+import { AppNavigationMenu } from "@/components/navigation/NavigationMenu";
+import { PageHeader } from "@/components/ui/page-header";
 
 // Mock data for transactions
 const mockTransactions = [
@@ -182,192 +183,186 @@ const AccountingDailyPage = () => {
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={() => navigate("/accounting")}
-          className="mr-2"
-        >
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          Indietro
-        </Button>
-        <div>
-          <h1 className="text-3xl font-bold">Registrazioni Giornaliere</h1>
-          <p className="text-gray-500">Gestione entrate e uscite quotidiane</p>
+    <div>
+      <AppNavigationMenu />
+      <div className="p-6 space-y-6">
+        <PageHeader
+          title="Registrazioni Giornaliere"
+          description="Gestione entrate e uscite quotidiane"
+          backLink="/accounting"
+        />
+
+        <div className="flex items-center space-x-2 mb-4">
+          <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="w-[250px] justify-start text-left font-normal border-gold-300">
+                <Calendar className="mr-2 h-4 w-4" />
+                {format(selectedDate, "dd MMMM yyyy", { locale: it })}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <CalendarComponent
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => {
+                  setSelectedDate(date || new Date());
+                  setIsCalendarOpen(false);
+                }}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+
+          <Button 
+            variant="outline" 
+            onClick={() => navigate(`/accounting/report/${format(selectedDate, 'yyyy-MM-dd')}`)}
+            className="border-gold-300 hover:bg-gold hover:text-cmr"
+          >
+            Report dettagliato
+          </Button>
         </div>
-      </div>
 
-      <div className="flex items-center space-x-2 mb-4">
-        <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="w-[250px] justify-start text-left font-normal">
-              <Calendar className="mr-2 h-4 w-4" />
-              {format(selectedDate, "dd MMMM yyyy", { locale: it })}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <CalendarComponent
-              mode="single"
-              selected={selectedDate}
-              onSelect={(date) => {
-                setSelectedDate(date || new Date());
-                setIsCalendarOpen(false);
-              }}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
-
-        <Button 
-          variant="outline" 
-          onClick={() => navigate(`/accounting/report/${format(selectedDate, 'yyyy-MM-dd')}`)}
-        >
-          Report dettagliato
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-green-600">Entrate</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">€{dailyIncome.toFixed(2)}</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-red-600">Uscite</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">€{dailyExpenses.toFixed(2)}</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className={dailyBalance >= 0 ? "text-blue-600" : "text-orange-600"}>
-              Bilancio
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className={`text-2xl font-bold ${dailyBalance >= 0 ? "text-blue-600" : "text-orange-600"}`}>
-              €{dailyBalance.toFixed(2)}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <form onSubmit={handleSubmitTransaction}>
-        <Card>
-          <CardHeader>
-            <CardTitle>Registra Nuova Transazione</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="type">Tipo di Transazione</Label>
-                <Select 
-                  value={transactionType} 
-                  onValueChange={setTransactionType}
-                >
-                  <SelectTrigger id="type">
-                    <SelectValue placeholder="Seleziona tipo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="income">Entrata</SelectItem>
-                    <SelectItem value="expense">Uscita</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="category">Categoria</Label>
-                <Select 
-                  value={category} 
-                  onValueChange={setCategory}
-                >
-                  <SelectTrigger id="category">
-                    <SelectValue placeholder="Seleziona categoria" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {transactionType === "income"
-                      ? mockIncomeCategories.map(cat => (
-                          <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                        ))
-                      : mockExpenseCategories.map(cat => (
-                          <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                        ))
-                    }
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="amount">Importo (€)</Label>
-                <Input
-                  id="amount"
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  placeholder="0.00"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2 md:col-span-2 lg:col-span-1">
-                <Label htmlFor="notes">Note (opzionale)</Label>
-                <Textarea
-                  id="notes"
-                  placeholder="Aggiungi dettagli sulla transazione"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  className="resize-none"
-                />
-              </div>
-            </div>
-
-            <Button type="submit" className="mt-4">
-              <Plus className="mr-2 h-4 w-4" />
-              Aggiungi Transazione
-            </Button>
-          </CardContent>
-        </Card>
-      </form>
-
-      <Separator />
-
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-4">
-          <TabsTrigger value="transactions">Transazioni</TabsTrigger>
-          <TabsTrigger value="sales">Vendite</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="transactions">
-          <h2 className="text-xl font-semibold mb-4">Transazioni del {format(selectedDate, "dd MMMM yyyy", { locale: it })}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-green-600">Entrate</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">€{dailyIncome.toFixed(2)}</div>
+            </CardContent>
+          </Card>
           
-          {filteredTransactions.length > 0 ? (
-            <DataTable 
-              columns={columns} 
-              data={filteredTransactions}
-            />
-          ) : (
-            <Card className="py-8">
-              <CardContent className="text-center">
-                <p className="text-muted-foreground">Nessuna transazione registrata per questa data.</p>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-red-600">Uscite</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">€{dailyExpenses.toFixed(2)}</div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className={dailyBalance >= 0 ? "text-blue-600" : "text-orange-600"}>
+                Bilancio
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={`text-2xl font-bold ${dailyBalance >= 0 ? "text-blue-600" : "text-orange-600"}`}>
+                €{dailyBalance.toFixed(2)}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-        <TabsContent value="sales">
-          <SalesTransactions date={formattedSelectedDate} />
-        </TabsContent>
-      </Tabs>
+        <form onSubmit={handleSubmitTransaction}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Registra Nuova Transazione</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="type">Tipo di Transazione</Label>
+                  <Select 
+                    value={transactionType} 
+                    onValueChange={setTransactionType}
+                  >
+                    <SelectTrigger id="type">
+                      <SelectValue placeholder="Seleziona tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="income">Entrata</SelectItem>
+                      <SelectItem value="expense">Uscita</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="category">Categoria</Label>
+                  <Select 
+                    value={category} 
+                    onValueChange={setCategory}
+                  >
+                    <SelectTrigger id="category">
+                      <SelectValue placeholder="Seleziona categoria" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {transactionType === "income"
+                        ? mockIncomeCategories.map(cat => (
+                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                          ))
+                        : mockExpenseCategories.map(cat => (
+                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                          ))
+                      }
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="amount">Importo (€)</Label>
+                  <Input
+                    id="amount"
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    placeholder="0.00"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2 md:col-span-2 lg:col-span-1">
+                  <Label htmlFor="notes">Note (opzionale)</Label>
+                  <Textarea
+                    id="notes"
+                    placeholder="Aggiungi dettagli sulla transazione"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    className="resize-none"
+                  />
+                </div>
+              </div>
+
+              <Button type="submit" className="mt-4">
+                <Plus className="mr-2 h-4 w-4" />
+                Aggiungi Transazione
+              </Button>
+            </CardContent>
+          </Card>
+        </form>
+
+        <Separator />
+
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-4">
+            <TabsTrigger value="transactions">Transazioni</TabsTrigger>
+            <TabsTrigger value="sales">Vendite</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="transactions">
+            <h2 className="text-xl font-semibold mb-4">Transazioni del {format(selectedDate, "dd MMMM yyyy", { locale: it })}</h2>
+            
+            {filteredTransactions.length > 0 ? (
+              <DataTable 
+                columns={columns} 
+                data={filteredTransactions}
+              />
+            ) : (
+              <Card className="py-8">
+                <CardContent className="text-center">
+                  <p className="text-muted-foreground">Nessuna transazione registrata per questa data.</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="sales">
+            <SalesTransactions date={formattedSelectedDate} />
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 };
