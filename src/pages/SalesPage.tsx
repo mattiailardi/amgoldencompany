@@ -1,19 +1,17 @@
+
 import { useState, useCallback } from "react";
 import { format } from "date-fns";
-import { it } from "date-fns/locale";
-import { Link, useNavigate } from "react-router-dom";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Plus, Calendar as CalendarIcon, BarChart3 } from "lucide-react";
 import { DataTable } from "@/components/data-table";
+import { Link, useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
 import { useSupabaseQuery } from "@/hooks/use-supabase-query";
-import { AppNavigationMenu } from "@/components/navigation/NavigationMenu";
-import { PageHeader } from "@/components/ui/page-header";
 
 // Mock data for sales
 const mockSalesData = [
@@ -100,294 +98,282 @@ const SalesPage = () => {
   }, [navigate]);
 
   return (
-    <div>
-      <AppNavigationMenu />
-      <div className="p-6 space-y-6">
-        <PageHeader
-          title="Vendite"
-          description="Gestisci e analizza le tue vendite"
-          actions={
-            <Link to="/sales/new">
-              <Button className="bg-gold text-cmr hover:bg-gold-400">
-                <Plus className="mr-1" />
-                Nuova vendita
-              </Button>
-            </Link>
-          }
-        />
+    <div className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Vendite</h1>
+          <p className="text-gray-500">Gestisci e analizza le tue vendite</p>
+        </div>
+        <Link to="/sales/new">
+          <Button>
+            <Plus className="mr-1" />
+            Nuova vendita
+          </Button>
+        </Link>
+      </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="bg-cmr/10 border border-gold-300">
-            <TabsTrigger 
-              value="overview"
-              className="data-[state=active]:bg-gold data-[state=active]:text-cmr"
-            >
-              <BarChart3 className="h-4 w-4 mr-2" />
-              Panoramica
-            </TabsTrigger>
-            <TabsTrigger 
-              value="daily"
-              className="data-[state=active]:bg-gold data-[state=active]:text-cmr"
-            >
-              <CalendarIcon className="h-4 w-4 mr-2" />
-              Vendite giornaliere
-            </TabsTrigger>
-            <TabsTrigger
-              value="categories"
-              className="data-[state=active]:bg-gold data-[state=active]:text-cmr"
-            >
-              Categorie
-            </TabsTrigger>
-          </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="overview">
+            <BarChart3 className="h-4 w-4 mr-2" />
+            Panoramica
+          </TabsTrigger>
+          <TabsTrigger value="daily">
+            <CalendarIcon className="h-4 w-4 mr-2" />
+            Vendite giornaliere
+          </TabsTrigger>
+          <TabsTrigger value="categories">
+            Categorie
+          </TabsTrigger>
+        </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle>Vendite totali</CardTitle>
-                  <CardDescription>Totale vendite</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">
-                    €{mockSalesData.reduce((sum, sale) => sum + sale.total, 0).toFixed(2)}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {mockSalesData.length} prodotti venduti
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle>Prodotto più venduto</CardTitle>
-                  <CardDescription>Per quantità</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    Pizza Margherita
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    27 unità vendute
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle>Categoria top</CardTitle>
-                  <CardDescription>Per fatturato</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    Pizze
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    €404.50 di vendite
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle>Vendite totali</CardTitle>
+                <CardDescription>Totale vendite</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">
+                  €{mockSalesData.reduce((sum, sale) => sum + sale.total, 0).toFixed(2)}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {mockSalesData.length} prodotti venduti
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle>Prodotto più venduto</CardTitle>
+                <CardDescription>Per quantità</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  Pizza Margherita
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  27 unità vendute
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle>Categoria top</CardTitle>
+                <CardDescription>Per fatturato</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  Pizze
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  €404.50 di vendite
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
+          <Card>
+            <CardHeader>
+              <CardTitle>Andamento vendite</CardTitle>
+              <CardDescription>Vendite giornaliere degli ultimi 7 giorni</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ChartContainer config={chartConfig}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart 
+                      data={getDailyChartData()}
+                      onClick={handleBarClick}
+                    >
+                      <XAxis dataKey="date" />
+                      <YAxis />
+                      <Tooltip 
+                        content={<ChartTooltipContent />}
+                        cursor={{fill: 'rgba(0, 0, 0, 0.1)'}}
+                      />
+                      <Bar 
+                        dataKey="value" 
+                        name="sales" 
+                        fill="var(--color-sales)" 
+                        style={{ cursor: 'pointer' }}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
+              </div>
+              <div className="text-center text-xs text-slate-500 mt-2">
+                Clicca su una barra per vedere il report dettagliato del giorno
+              </div>
+            </CardContent>
+          </Card>
+
+          <Link to="/sales/history" className="flex items-center text-sm text-blue-600 hover:underline">
+            Visualizza lo storico completo
+            <ChevronRight className="h-4 w-4 ml-1" />
+          </Link>
+        </TabsContent>
+
+        <TabsContent value="daily" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Andamento vendite</CardTitle>
-                <CardDescription>Vendite giornaliere degli ultimi 7 giorni</CardDescription>
+                <CardTitle>Seleziona data</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  className="border rounded-md p-3"
+                />
+              </CardContent>
+            </Card>
+
+            <Card className="md:col-span-2">
+              <CardHeader className="pb-2">
+                <CardTitle>
+                  Vendite del {selectedDate && format(selectedDate, 'dd/MM/yyyy')}
+                </CardTitle>
+                <CardDescription>
+                  Dettaglio delle vendite giornaliere
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-1">Totale vendite</h4>
+                      <p className="text-2xl font-bold">
+                        €{selectedDate ? 
+                          mockSalesData
+                            .filter(sale => sale.date === format(selectedDate, 'yyyy-MM-dd'))
+                            .reduce((sum, sale) => sum + sale.total, 0)
+                            .toFixed(2) : 
+                          '0.00'
+                        }
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-1">Prodotti venduti</h4>
+                      <p className="text-2xl font-bold">
+                        {selectedDate ? 
+                          mockSalesData
+                            .filter(sale => sale.date === format(selectedDate, 'yyyy-MM-dd'))
+                            .reduce((sum, sale) => sum + sale.quantity, 0) : 
+                          '0'
+                        }
+                      </p>
+                    </div>
+                  </div>
+
+                  <Separator />
+                  
+                  <div className="flex gap-2">
+                    <Link to="/sales/new">
+                      <Button size="sm" variant="outline">
+                        <Plus className="mr-1 h-4 w-4" />
+                        Aggiungi vendite
+                      </Button>
+                    </Link>
+                    
+                    {selectedDate && mockSalesData.some(sale => sale.date === format(selectedDate, 'yyyy-MM-dd')) && (
+                      <Link to={`/accounting/report/${format(selectedDate, 'yyyy-MM-dd')}`}>
+                        <Button size="sm" variant="secondary">
+                          <BarChart3 className="mr-1 h-4 w-4" />
+                          Report dettagliato
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          {filteredData.length > 0 ? (
+            <DataTable 
+              columns={columns} 
+              data={filteredData} 
+              searchKey="productName"
+            />
+          ) : (
+            <Card className="text-center py-8">
+              <p className="text-muted-foreground">Nessuna vendita registrata per questa data.</p>
+              <div className="mt-4">
+                <Link to="/sales/new">
+                  <Button>
+                    <Plus className="mr-1" />
+                    Registra vendite
+                  </Button>
+                </Link>
+              </div>
+            </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="categories" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Vendite per categoria</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
                   <ChartContainer config={chartConfig}>
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart 
-                        data={getDailyChartData()}
-                        onClick={handleBarClick}
-                      >
-                        <XAxis dataKey="date" />
+                      <BarChart data={getCategoryChartData()}>
+                        <XAxis dataKey="name" />
                         <YAxis />
-                        <Tooltip 
-                          content={<ChartTooltipContent />}
-                          cursor={{fill: 'rgba(0, 0, 0, 0.1)'}}
-                        />
-                        <Bar 
-                          dataKey="value" 
-                          name="sales" 
-                          fill="var(--color-sales)" 
-                          style={{ cursor: 'pointer' }}
-                        />
+                        <Tooltip content={<ChartTooltipContent />} />
+                        <Bar dataKey="value" name="sales" fill="var(--color-sales)" />
                       </BarChart>
                     </ResponsiveContainer>
                   </ChartContainer>
                 </div>
-                <div className="text-center text-xs text-slate-500 mt-2">
-                  Clicca su una barra per vedere il report dettagliato del giorno
-                </div>
               </CardContent>
             </Card>
 
-            <Link to="/sales/history" className="flex items-center text-sm text-blue-600 hover:underline">
-              Visualizza lo storico completo
-              <ChevronRight className="h-4 w-4 ml-1" />
-            </Link>
-          </TabsContent>
-
-          <TabsContent value="daily" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Seleziona data</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={setSelectedDate}
-                    className="border rounded-md p-3"
-                  />
-                </CardContent>
-              </Card>
-
-              <Card className="md:col-span-2">
-                <CardHeader className="pb-2">
-                  <CardTitle>
-                    Vendite del {selectedDate && format(selectedDate, 'dd/MM/yyyy')}
-                  </CardTitle>
-                  <CardDescription>
-                    Dettaglio delle vendite giornaliere
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <h4 className="text-sm font-medium text-muted-foreground mb-1">Totale vendite</h4>
-                        <p className="text-2xl font-bold">
-                          €{selectedDate ? 
-                            mockSalesData
-                              .filter(sale => sale.date === format(selectedDate, 'yyyy-MM-dd'))
-                              .reduce((sum, sale) => sum + sale.total, 0)
-                              .toFixed(2) : 
-                            '0.00'
-                          }
-                        </p>
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-medium text-muted-foreground mb-1">Prodotti venduti</h4>
-                        <p className="text-2xl font-bold">
-                          {selectedDate ? 
-                            mockSalesData
-                              .filter(sale => sale.date === format(selectedDate, 'yyyy-MM-dd'))
-                              .reduce((sum, sale) => sum + sale.quantity, 0) : 
-                            '0'
-                          }
-                        </p>
-                      </div>
-                    </div>
-
-                    <Separator />
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle>Dettaglio Categorie</CardTitle>
+                <CardDescription>Suddivisione per categoria</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {Array.from(new Set(mockSalesData.map(s => s.category))).map((category) => {
+                    const categoryTotal = mockSalesData
+                      .filter(s => s.category === category)
+                      .reduce((sum, sale) => sum + sale.total, 0);
                     
-                    <div className="flex gap-2">
-                      <Link to="/sales/new">
-                        <Button size="sm" variant="outline">
-                          <Plus className="mr-1 h-4 w-4" />
-                          Aggiungi vendite
-                        </Button>
-                      </Link>
-                      
-                      {selectedDate && mockSalesData.some(sale => sale.date === format(selectedDate, 'yyyy-MM-dd')) && (
-                        <Link to={`/accounting/report/${format(selectedDate, 'yyyy-MM-dd')}`}>
-                          <Button size="sm" variant="secondary">
-                            <BarChart3 className="mr-1 h-4 w-4" />
-                            Report dettagliato
-                          </Button>
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-            
-            {filteredData.length > 0 ? (
-              <DataTable 
-                columns={columns} 
-                data={filteredData} 
-                searchKey="productName"
-              />
-            ) : (
-              <Card className="text-center py-8">
-                <p className="text-muted-foreground">Nessuna vendita registrata per questa data.</p>
-                <div className="mt-4">
-                  <Link to="/sales/new">
-                    <Button>
-                      <Plus className="mr-1" />
-                      Registra vendite
-                    </Button>
-                  </Link>
-                </div>
-              </Card>
-            )}
-          </TabsContent>
-
-          <TabsContent value="categories" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Vendite per categoria</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[300px]">
-                    <ChartContainer config={chartConfig}>
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={getCategoryChartData()}>
-                          <XAxis dataKey="name" />
-                          <YAxis />
-                          <Tooltip content={<ChartTooltipContent />} />
-                          <Bar dataKey="value" name="sales" fill="var(--color-sales)" />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </ChartContainer>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle>Dettaglio Categorie</CardTitle>
-                  <CardDescription>Suddivisione per categoria</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {Array.from(new Set(mockSalesData.map(s => s.category))).map((category) => {
-                      const categoryTotal = mockSalesData
-                        .filter(s => s.category === category)
-                        .reduce((sum, sale) => sum + sale.total, 0);
+                    const categoryQuantity = mockSalesData
+                      .filter(s => s.category === category)
+                      .reduce((sum, sale) => sum + sale.quantity, 0);
                     
-                      const categoryQuantity = mockSalesData
-                        .filter(s => s.category === category)
-                        .reduce((sum, sale) => sum + sale.quantity, 0);
-                    
-                      return (
-                        <div key={category as string} className="flex justify-between items-center">
-                          <div>
-                            <p className="font-medium">{category}</p>
-                            <p className="text-sm text-muted-foreground">{categoryQuantity} prodotti</p>
-                          </div>
-                          <p className="font-medium">€{categoryTotal.toFixed(2)}</p>
+                    return (
+                      <div key={category as string} className="flex justify-between items-center">
+                        <div>
+                          <p className="font-medium">{category}</p>
+                          <p className="text-sm text-muted-foreground">{categoryQuantity} prodotti</p>
                         </div>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <DataTable 
-              columns={columns} 
-              data={mockSalesData} 
-              searchKey="category"
-            />
-          </TabsContent>
-        </Tabs>
-      </div>
+                        <p className="font-medium">€{categoryTotal.toFixed(2)}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <DataTable 
+            columns={columns} 
+            data={mockSalesData} 
+            searchKey="category"
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

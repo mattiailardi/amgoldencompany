@@ -1,3 +1,4 @@
+
 export interface Customer {
   id: number;
   firstName: string;
@@ -21,7 +22,6 @@ export enum CustomerType {
 export interface ProductCategory {
   id: number;
   name: string;
-  productCount?: number; // Optional property to resolve the build error
 }
 
 export interface Product {
